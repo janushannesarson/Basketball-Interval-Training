@@ -1,3 +1,4 @@
+import 'package:basketball_workouts/home_screen/home_screen_view_model.dart';
 import 'package:basketball_workouts/home_screen/new_interval_dialog.dart';
 import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +9,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> data = ["aa", "bb", "cc", "dd", "ee", "ff", "gg"];
 
-  void _onReorder(int oldIndex, int newIndex) {
+  HomeScreenViewModel viewModel = HomeScreenViewModel();
+
+  void _onReorder(int oldIndex, int newIndex){
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
+      viewModel.onReorder(oldIndex, newIndex);
+    });
+  }
 
-      final x = data.removeAt(oldIndex);
-      data.insert(newIndex, x);
+  void _addIntervalDialog() {
+    showDialog(context: context, child: NewIntervalDialog(onAddConfirmed: _onAddConfirmed,));
+  }
+
+  void _onAddConfirmed(String exercise, int duration, int rest){
+    setState(() {
+      viewModel.addInterval(exercise, duration, rest);  
     });
   }
 
@@ -35,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: ReorderableListView(
-        children: data
+        children: viewModel.intervals
             .map((index) => ListTile(
                   key: ObjectKey(index),
                   title: Text("$index"),
@@ -47,7 +54,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _addIntervalDialog(){
-    showDialog(context: context, child: NewIntervalDialog());
-  }
 }

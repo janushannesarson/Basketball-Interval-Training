@@ -3,11 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NewIntervalDialog extends StatelessWidget {
-  const NewIntervalDialog({Key key, this.interval, this.onAdd})
-      : super(key: key);
+  NewIntervalDialog({Key key, this.onAddConfirmed}) : super(key: key);
 
-  final WorkInterval interval;
-  final void Function() onAdd;
+  final exerciseCtrl = TextEditingController();
+  final durationCtrl = TextEditingController();
+  final restCtrl = TextEditingController();
+
+  //test comment
+  final void Function(String exercise, int duration, int rest) onAddConfirmed;
+
+  void _addIntervalPressed() {
+    onAddConfirmed(exerciseCtrl.text, int.parse(durationCtrl.text),
+        int.parse(restCtrl.text));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +23,7 @@ class NewIntervalDialog extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(20),
@@ -24,7 +33,7 @@ class NewIntervalDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text(
-                    "Edit interval",
+                    "New interval",
                     style: TextStyle(fontSize: 20),
                   )
                 ],
@@ -33,6 +42,7 @@ class NewIntervalDialog extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10),
               child: TextField(
+                controller: exerciseCtrl,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Exercise',
@@ -42,9 +52,10 @@ class NewIntervalDialog extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10),
               child: TextField(
+                controller: durationCtrl,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Duration in seconds',
+                  labelText: 'Work duration in seconds',
                 ),
                 inputFormatters: <TextInputFormatter>[
                   WhitelistingTextInputFormatter.digitsOnly
@@ -52,6 +63,24 @@ class NewIntervalDialog extends StatelessWidget {
                 keyboardType: TextInputType.number,
               ),
             ),
+            Container(
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                controller: restCtrl,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Rest in seconds',
+                ),
+                inputFormatters: <TextInputFormatter>[
+                  WhitelistingTextInputFormatter.digitsOnly
+                ],
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            FlatButton(
+                color: Colors.lightBlue,
+                onPressed: _addIntervalPressed,
+                child: Text("Add interval"))
           ],
         ),
       ),
