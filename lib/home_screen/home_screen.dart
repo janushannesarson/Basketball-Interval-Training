@@ -9,49 +9,85 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   HomeScreenViewModel viewModel = HomeScreenViewModel();
 
-  void _onReorder(int oldIndex, int newIndex){
+  int _selectedIndex = 1;
+
+  void _onReorder(int oldIndex, int newIndex) {
     setState(() {
       viewModel.onReorder(oldIndex, newIndex);
     });
   }
 
   void _addIntervalDialog() {
-    showDialog(context: context, child: NewIntervalDialog(onAddConfirmed: _onAddConfirmed,));
+    showDialog(
+        context: context,
+        child: NewIntervalDialog(
+          onAddConfirmed: _onAddConfirmed,
+        ));
   }
 
-  void _onAddConfirmed(String exercise, int duration, int rest){
+  void _onAddConfirmed(String exercise, int duration, int rest) {
     setState(() {
-      viewModel.addInterval(exercise, duration, rest);  
+      viewModel.addInterval(exercise, duration, rest);
     });
   }
+
+  void _onItemTapped(int index){
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _onCreateWorkout() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey,
       appBar: AppBar(
-        title: Text("Home Screen"),
+        title: Text("Workout Editor"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
-            tooltip: "Sort it",
-            onPressed: _addIntervalDialog,
+            icon: Icon(Icons.done),
+            tooltip: "Create workout",
+            onPressed: _onCreateWorkout,
           )
         ],
       ),
       body: ReorderableListView(
         children: viewModel.intervals
-            .map((index) => ListTile(
+            .map((index) => Dismissible(
                   key: ObjectKey(index),
-                  title: Text("$index"),
-                  subtitle: Text("Move it"),
+                  child: Card(
+                    elevation: 8,
+                    child: ListTile(
+                      title: Text("${index.title}"),
+                      subtitle: Text(
+                          "Duration: ${index.duration} seconds Rest: ${index.rest} seconds"),
+                      trailing: Icon(Icons.drag_handle),
+                    ),
+                  ),
                 ))
             .toList(),
         onReorder: _onReorder,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addIntervalDialog,
+        child: Icon(Icons.add),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.add_box), title: Text("Workout Editor")),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Workouts")),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+        )
+      ,
+    
     );
   }
-
 }
