@@ -13,7 +13,7 @@ class HomeScreenViewModel {
   }
 
   void addInterval(String exercise, int duration, int rest){
-    intervals.add(WorkInterval(title: exercise, duration: duration, rest: rest));
+    intervals.add(WorkInterval(description: exercise, duration: duration, rest: rest));
   }
   
 }

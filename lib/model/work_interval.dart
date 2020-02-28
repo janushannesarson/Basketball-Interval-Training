@@ -1,7 +1,7 @@
 class WorkInterval{
-  String title;
+  String description;
   int duration;
   int rest;
 
-  WorkInterval({this.title, this.duration, this.rest});
+  WorkInterval({this.description, this.duration, this.rest});
 }
