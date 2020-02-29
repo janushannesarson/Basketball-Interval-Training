@@ -9,6 +9,10 @@ class WorkoutsScreenViewModel{
   }
 
   void addWorkout(String name){
-    _workoutsDao.insertWorkout(Workout(id: 2,name: name));
+    _workoutsDao.insertWorkout(Workout(name: name));
+  }
+
+  void deleteWorkout(int id){
+    _workoutsDao.deleteWorkout(id);
   }
 }

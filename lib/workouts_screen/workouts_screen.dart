@@ -1,4 +1,4 @@
-import 'package:basketball_workouts/home_screen/home_screen.dart';
+import 'package:basketball_workouts/home_screen/edit_workout_screen.dart';
 import 'package:basketball_workouts/model/workout.dart';
 import 'package:basketball_workouts/workouts_screen/new_workout_dialog.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen_view_model.dart';
@@ -25,7 +25,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     return viewModel.getWorkouts();
   }
 
-  void _onNewWorkoutConfirmed(String name){
+  void _onNewWorkoutConfirmed(String name) {
     setState(() {
       viewModel.addWorkout(name);
       workouts = viewModel.getWorkouts();
@@ -39,6 +39,25 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
         child: NewWorkoutDialog(
           onNewWorkoutConfirmed: _onNewWorkoutConfirmed,
         ));
+  }
+
+  void _deleteWorkout(int id) {
+    setState(() {
+      viewModel.deleteWorkout(id);
+    });
+  }
+
+  void _editWorkoutPressed(int id, String workoutName) {
+    var routeToEditWorkoutScreen = new MaterialPageRoute(
+        builder: (BuildContext context) => new EditWorkoutScreen(
+              workoutId: id,
+              workoutName: workoutName,
+            ));
+
+    Navigator.push(
+      context,
+      routeToEditWorkoutScreen,
+    );
   }
 
   @override
@@ -57,14 +76,47 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
       body: FutureBuilder<List>(
           future: workouts,
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-            if(snapshot.hasError){
+            if (snapshot.hasError) {
               return Container();
-            } else if(snapshot.hasData){
-              return ListView.builder(itemCount: snapshot.data.length ,itemBuilder: (BuildContext, int index){
-                return ListTile(title: Text((snapshot.data[index]).name));
-              });
+            } else if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (buildContext, int index) {
+                    return Dismissible(
+                      key: Key(snapshot.data[index].id.toString()),
+                      background: Container(
+                        child: Center(child: Text("Delete workout")),
+                        color: Colors.red,
+                      ),
+                      onDismissed: (direction) {
+                        _deleteWorkout(snapshot.data[index].id);
+
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text("${snapshot.data[index].name} deleted")));
+                        snapshot.data.removeAt(index);
+                      },
+                      child: Card(
+                        child: ListTile(
+                          title: Text((snapshot.data[index]).name),
+                          trailing: IconButton(
+                            icon: Icon(Icons.edit),
+                            splashColor: Colors.amber,
+                            onPressed: () {
+                              _editWorkoutPressed(snapshot.data[index].id,
+                                  snapshot.data[index].name);
+                            },
+                          ),
+                        ),
+                        elevation: 5,
+                        color: Colors.orange,
+                      ),
+                    );
+                  });
             } else {
-              return Center(child: CircularProgressIndicator(),);
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
           }),
     );

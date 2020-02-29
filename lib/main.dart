@@ -1,4 +1,4 @@
-import 'package:basketball_workouts/home_screen/home_screen.dart';
+import 'package:basketball_workouts/home_screen/edit_workout_screen.dart';
 import 'package:basketball_workouts/settings_screen/settings_screen.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen.dart';
 import 'package:flutter/material.dart';
