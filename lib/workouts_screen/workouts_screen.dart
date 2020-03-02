@@ -47,11 +47,13 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     });
   }
 
-  void _editWorkoutPressed(int id, String workoutName) {
+  void _editWorkoutPressed(
+      int id, String workoutName, BuildContext scaffoldContext) {
     var routeToEditWorkoutScreen = new MaterialPageRoute(
         builder: (BuildContext context) => new EditWorkoutScreen(
               workoutId: id,
               workoutName: workoutName,
+              scaffoldContext: scaffoldContext,
             ));
 
     Navigator.push(
@@ -104,7 +106,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                             splashColor: Colors.amber,
                             onPressed: () {
                               _editWorkoutPressed(snapshot.data[index].id,
-                                  snapshot.data[index].name);
+                                  snapshot.data[index].name, context);
                             },
                           ),
                         ),

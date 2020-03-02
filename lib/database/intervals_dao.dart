@@ -19,6 +19,12 @@ class IntervalsDao {
     );
   }
 
+  Future<void> deleteInterval(WorkInterval interval) async{
+    final Database db = await DataBaseRepository.intervalsDatabase;
+
+    await db.delete('intervals', where: "id = ?", whereArgs: [interval.id]);
+  }
+
   Future<List<WorkInterval>> getIntervals(int workoutId) async {
     final Database db = await DataBaseRepository.intervalsDatabase;
 
