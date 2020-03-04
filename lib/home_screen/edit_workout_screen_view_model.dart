@@ -35,6 +35,11 @@ class EditWorkoutScreenViewModel {
     dao.insertInterval(interval, workoutId);
   }
 
+  void deleteInterval(WorkInterval interval){
+    dao.deleteInterval(interval);
+    intervals.remove(interval);
+  }
+
   Future<List<WorkInterval>> getIntervals() {
     return dao.getIntervals(workoutId);
   }

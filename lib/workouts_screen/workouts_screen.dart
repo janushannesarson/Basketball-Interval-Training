@@ -1,9 +1,11 @@
 import 'package:basketball_workouts/home_screen/edit_workout_screen.dart';
 import 'package:basketball_workouts/model/workout.dart';
+import 'package:basketball_workouts/timer_screen/timer_screen.dart';
 import 'package:basketball_workouts/workouts_screen/new_workout_dialog.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 class WorkoutsScreen extends StatefulWidget {
   @override
@@ -101,14 +103,18 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                       child: Card(
                         child: ListTile(
                           title: Text((snapshot.data[index]).name),
-                          trailing: IconButton(
-                            icon: Icon(Icons.edit),
-                            splashColor: Colors.amber,
-                            onPressed: () {
-                              _editWorkoutPressed(snapshot.data[index].id,
-                                  snapshot.data[index].name, context);
-                            },
-                          ),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  splashColor: Colors.amber,
+                                  onPressed: () {
+                                    _editWorkoutPressed(snapshot.data[index].id,
+                                        snapshot.data[index].name, context);
+                                  },
+                                ),
+                              ]),
                         ),
                         elevation: 5,
                         color: Colors.orange,

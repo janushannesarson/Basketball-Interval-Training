@@ -20,7 +20,7 @@ class NewIntervalDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Container(
+      child: SingleChildScrollView(
         padding: EdgeInsets.all(0),
         child: Column(
           mainAxisSize: MainAxisSize.min,

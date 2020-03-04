@@ -1,6 +1,7 @@
 import 'package:basketball_workouts/home_screen/edit_workout_screen_view_model.dart';
 import 'package:basketball_workouts/home_screen/new_interval_dialog.dart';
 import 'package:basketball_workouts/model/work_interval.dart';
+import 'package:basketball_workouts/timer_screen/timer_screen.dart';
 import 'package:flutter/material.dart';
 
 class EditWorkoutScreen extends StatefulWidget {
@@ -8,7 +9,8 @@ class EditWorkoutScreen extends StatefulWidget {
   final String workoutName;
   final BuildContext scaffoldContext;
 
-  EditWorkoutScreen({Key key, this.workoutId, this.workoutName, this.scaffoldContext})
+  EditWorkoutScreen(
+      {Key key, this.workoutId, this.workoutName, this.scaffoldContext})
       : super(key: key);
 
   @override
@@ -52,10 +54,14 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
     viewModel.saveWorkout();
     Navigator.pop(context);
 
-    Scaffold.of(widget.scaffoldContext).showSnackBar(SnackBar(
-        content:
-        Text("Workout saved")));
+    Scaffold.of(widget.scaffoldContext)
+        .showSnackBar(SnackBar(content: Text("Workout saved")));
+  }
 
+  void _deleteInterval(WorkInterval interval) {
+    setState(() {
+      viewModel.deleteInterval(interval);
+    });
   }
 
   List<Widget> convertToCards(List<WorkInterval> intervals) {
@@ -63,16 +69,24 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
 
     for (var interval in intervals) {
       result.add(Dismissible(
+        background: Container(
+          child: Center(child: Text("Delete interval")),
+          color: Colors.red,
+        ),
         key: Key(interval.id.toString()),
-        onDismissed: (direction){
-
+        onDismissed: (direction) {
+          setState(() {
+            _deleteInterval(interval);
+          });
         },
-        child: Card(
-          child: ListTile(
-            title: Text(interval.description),
-            subtitle:
-                Text("Duration: ${interval.duration} Rest: ${interval.rest}"),
-            trailing: Icon(Icons.drag_handle),
+        child: Container(
+          child: Card(
+            child: ListTile(
+              title: Text(interval.description),
+              subtitle:
+                  Text("Duration: ${interval.duration} Rest: ${interval.rest}"),
+              trailing: Icon(Icons.drag_handle),
+            ),
           ),
         ),
       ));
@@ -81,26 +95,33 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
     return result;
   }
 
-  Future<bool> _onBackPressed() async{
+  Future<bool> _onBackPressed() async {
     viewModel.saveWorkout();
 
     return true;
   }
 
+  void _startWorkoutPressed() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                new TimerScreen(viewModel.intervals)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal,
       appBar: AppBar(
         title: Text("${widget.workoutName}"),
         actions: <Widget>[
-//          IconButton(
-//            icon: Icon(Icons.save),
-//            tooltip: "Save workout",
-//            onPressed: (){
-//              _saveWorkoutPressed(context);
-//            },
-//          )
+          IconButton(
+            icon: Icon(Icons.play_circle_filled),
+            tooltip: "Start workout",
+            onPressed: () {
+              _startWorkoutPressed();
+            },
+          )
         ],
       ),
       body: WillPopScope(
