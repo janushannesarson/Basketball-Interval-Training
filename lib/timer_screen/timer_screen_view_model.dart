@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:basketball_workouts/util/text_to_speech.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:quiver/async.dart';
 
 import 'package:basketball_workouts/model/work_interval.dart';
@@ -17,15 +19,16 @@ class TimerScreenViewModel {
   void Function(int) _scrollCallBack;
   CountdownTimer countdownTimer;
   var progress = 0;
-  var cancelPressed = false;
-  var startPressed = false;
+  //var cancelPressed = false;
+  //var startPressed = false;
   TimerMode mode = TimerMode.stopped;
 
   TimerScreenViewModel(this.intervals, this._callBack, this._scrollCallBack);
 
   void startTimer() {
+    TextToSpeech.instance.speak(intervals[progress].description);
     mode = TimerMode.duration;
-    startPressed = true;
+    //startPressed = true;
     final interval = intervals[progress];
 
     countdownTimer = new CountdownTimer(
@@ -39,13 +42,13 @@ class TimerScreenViewModel {
   }
 
   void _durationDone() {
-    if (!cancelPressed) {
+    if(mode != TimerMode.stopped){
       _startRest();
     }
-    cancelPressed = false;
   }
 
   void _startRest(){
+    TextToSpeech.instance.speak("rest");
     mode = TimerMode.rest;
     countdownTimer = new CountdownTimer(
         Duration(seconds: intervals[progress].rest), Duration(seconds: 0));
@@ -58,22 +61,20 @@ class TimerScreenViewModel {
   }
 
   void _restDone() {
-    if (!cancelPressed) {
+    if(mode != TimerMode.stopped){
       progress += 1;
-      if (progress < intervals.length) {
+      if(progress < intervals.length){
         _scrollCallBack(progress);
         startTimer();
       } else {
         resetTimer();
       }
     }
-    cancelPressed = false;
+
   }
 
   void resetTimer() {
     mode = TimerMode.stopped;
-    startPressed = false;
-    cancelPressed = true;
     progress = 0;
     countdownTimer.cancel();
     _callBack(0);
@@ -81,6 +82,28 @@ class TimerScreenViewModel {
 
   String getExercise(){
     return intervals[progress].description;
+  }
+
+  double getProgressPercentage(int seconds){
+    double res = 1;
+
+    if(mode == TimerMode.duration){
+      res = seconds / intervals[progress].duration;
+    }else if(mode == TimerMode.rest){
+      res = seconds / intervals[progress].rest;
+    }
+
+    return res;
+  }
+
+  int getWorkoutLengthInSeconds(){
+    int res = 0;
+
+    for(var interval in intervals){
+      res += interval.duration + interval.rest;
+    }
+
+    return res;
   }
 
 }

@@ -14,8 +14,12 @@ class TimerScreen extends StatefulWidget {
 
 class _TimerScreenState extends State<TimerScreen> {
   String timerText;
+  String intervalLengthText;
   TimerScreenViewModel viewModel;
   ItemScrollController _scrollController = ItemScrollController();
+  double timerProgress = 1;
+  double workoutProgress = 0.5;
+  int test = 100;
 
   @override
   void initState() {
@@ -25,9 +29,10 @@ class _TimerScreenState extends State<TimerScreen> {
     timerText = _secondsToString(viewModel.intervals[0].duration);
   }
 
-  void callBack(int timerText) {
+  void callBack(int timerCount) {
     setState(() {
-      this.timerText = _secondsToString(timerText);
+      this.timerText = _secondsToString(timerCount);
+      timerProgress = viewModel.getProgressPercentage(timerCount);
     });
   }
 
@@ -35,23 +40,33 @@ class _TimerScreenState extends State<TimerScreen> {
     _scrollController.scrollTo(index: index, duration: Duration(seconds: 1));
   }
 
-  void _startPressed() {
+  void _startPressed() async{
     viewModel.startTimer();
+  }
+
+  void _stopPressed() {
+    timerProgress = 1;
+    viewModel.resetTimer();
   }
 
   Widget buildIntervalWidget(int index) {
     WorkInterval interval = viewModel.intervals[index];
 
     var color;
+    var icon;
+    var progressIndicator;
 
     if (viewModel.progress == index) {
+      progressIndicator = LinearProgressIndicator(value: timerProgress, backgroundColor: Colors.red,);
       if (viewModel.mode == TimerMode.duration) {
         color = Colors.red;
+        icon = Icons.directions_run;
       } else if (viewModel.mode == TimerMode.rest) {
         color = Colors.green;
-      } else if (viewModel.mode == TimerMode.stopped) {
-        color = Colors.red;
+        icon = Icons.timer;
       }
+    } else {
+      progressIndicator = Container();
     }
 
     return Column(
@@ -60,14 +75,25 @@ class _TimerScreenState extends State<TimerScreen> {
         Card(
             elevation: 5,
             color: color,
-            child: Center(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  interval.description,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+            child: Column(
+              children: <Widget>[
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(icon),
+                        Text(
+                          interval.description,
+                          style:
+                              TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                progressIndicator,
+              ],
             )),
       ],
     );
@@ -106,14 +132,12 @@ class _TimerScreenState extends State<TimerScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      Text(
-                        "Timer",
-                        style: TextStyle(fontSize: 50),
-                      ),
-                      Text(
-                        timerText,
-                        style: TextStyle(
-                            fontSize: 50.0, fontWeight: FontWeight.w700),
+                      Container(
+                        child: Text(
+                          timerText,
+                          style: TextStyle(
+                              fontSize: 100.0, fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),
@@ -138,15 +162,16 @@ class _TimerScreenState extends State<TimerScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         RaisedButton(
-                          onPressed:
-                              viewModel.startPressed ? null : _startPressed,
+                          onPressed: viewModel.mode != TimerMode.stopped
+                              ? null
+                              : _startPressed,
                           color: Colors.green,
                           child: Text("Start"),
                         ),
                         RaisedButton(
-                          onPressed: () {
-                            viewModel.resetTimer();
-                          },
+                          onPressed: viewModel.mode == TimerMode.stopped
+                              ? null
+                              : _stopPressed,
                           color: Colors.red,
                           child: Text("Stop"),
                         ),
@@ -155,7 +180,7 @@ class _TimerScreenState extends State<TimerScreen> {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

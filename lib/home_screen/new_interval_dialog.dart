@@ -1,6 +1,8 @@
+import 'package:basketball_workouts/catalog_screen/catalog_screen.dart';
 import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
 
 class NewIntervalDialog extends StatelessWidget {
   NewIntervalDialog({Key key, this.onAddConfirmed}) : super(key: key);
@@ -17,6 +19,14 @@ class NewIntervalDialog extends StatelessWidget {
         int.parse(restCtrl.text));
   }
 
+  void _exerciseCatalogPressed(BuildContext context) async {
+    String chosenExercise = await Navigator.push(context, MaterialPageRoute(
+        builder: (BuildContext context) => new CatalogScreen()
+    ));
+
+    exerciseCtrl.text = chosenExercise;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -27,7 +37,9 @@ class NewIntervalDialog extends StatelessWidget {
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(20),
-              color: Theme.of(context).accentColor,
+              color: Theme
+                  .of(context)
+                  .accentColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
@@ -41,12 +53,23 @@ class NewIntervalDialog extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: TextField(
-                controller: exerciseCtrl,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Exercise',
-                ),
+              child: Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextField(
+                      controller: exerciseCtrl,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Exercise',
+                      ),
+                    ),
+                  ),
+                  Container(padding: EdgeInsets.all(5), child: RaisedButton(
+                    child: Text("Catalog"), onPressed: () =>
+                  {
+                    _exerciseCatalogPressed(context)
+                  },))
+                ],
               ),
             ),
             Container(
