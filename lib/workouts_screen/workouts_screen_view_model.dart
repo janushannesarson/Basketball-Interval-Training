@@ -1,11 +1,17 @@
 import 'package:basketball_workouts/database/workouts_dao.dart';
+import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:basketball_workouts/model/workout.dart';
 
 class WorkoutsScreenViewModel{
   WorkoutsDao _workoutsDao = WorkoutsDao();
+  Future<List<Workout>> workouts;
 
-  Future<List<Workout>> getWorkouts(){
-    return _workoutsDao.workouts();
+  WorkoutsScreenViewModel(){
+    getWorkouts();
+  }
+
+  void getWorkouts(){
+    workouts = _workoutsDao.workouts();
   }
 
   void addWorkout(String name){
@@ -15,4 +21,16 @@ class WorkoutsScreenViewModel{
   void deleteWorkout(int id){
     _workoutsDao.deleteWorkout(id);
   }
+
+  int workoutDurationInSeconds(Workout workout){
+    int sum = 0;
+
+    for(var interval in workout.intervals){
+      sum += interval.duration + interval.rest;
+    }
+
+    return sum;
+  }
+
+
 }

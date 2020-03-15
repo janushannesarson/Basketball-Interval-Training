@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:basketball_workouts/database/database_repository.dart';
+import 'package:basketball_workouts/database/intervals_dao.dart';
+import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:basketball_workouts/model/workout.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,12 +29,24 @@ class WorkoutsDao {
 
     final List<Map<String, dynamic>> maps = await db.query('workouts');
 
-    return List.generate(maps.length, (i) {
-      return Workout(
+    return _buildWorkouts(maps);
+  }
+
+  Future<List<Workout>> _buildWorkouts(List<Map<String, dynamic>> maps) async {
+    IntervalsDao intervalsDao = IntervalsDao();
+
+    List<Workout> result = List();
+
+    for(int i = 0; i < maps.length; i++){
+      final intervals = await intervalsDao.getIntervals(maps[i]['id']);
+      result.add(Workout(
         id: maps[i]['id'],
         name: maps[i]['name'],
-      );
-    });
+        intervals: intervals
+      ));
+    }
+
+    return result;
   }
 
   void deleteWorkout(int id) async {

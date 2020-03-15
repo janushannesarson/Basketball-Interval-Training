@@ -22,11 +22,19 @@ class TimerScreenViewModel {
   //var cancelPressed = false;
   //var startPressed = false;
   TimerMode mode = TimerMode.stopped;
+  TextToSpeech tts;
 
-  TimerScreenViewModel(this.intervals, this._callBack, this._scrollCallBack);
+  TimerScreenViewModel(this.intervals, this._callBack, this._scrollCallBack){
+    initTts();
+  }
+
+  void initTts() async {
+    tts = await TextToSpeech.newInstance();
+  }
+
 
   void startTimer() {
-    TextToSpeech.instance.speak(intervals[progress].description);
+    tts?.speak(intervals[progress].description);
     mode = TimerMode.duration;
     //startPressed = true;
     final interval = intervals[progress];
@@ -48,7 +56,7 @@ class TimerScreenViewModel {
   }
 
   void _startRest(){
-    TextToSpeech.instance.speak("rest");
+    tts?.speak("rest");
     mode = TimerMode.rest;
     countdownTimer = new CountdownTimer(
         Duration(seconds: intervals[progress].rest), Duration(seconds: 0));

@@ -14,23 +14,11 @@ class WorkoutsScreen extends StatefulWidget {
 
 class _WorkoutsScreenState extends State<WorkoutsScreen> {
   WorkoutsScreenViewModel viewModel = WorkoutsScreenViewModel();
-  Future<List> workouts;
-
-  @override
-  void initState() {
-    workouts = getWorkouts();
-
-    super.initState();
-  }
-
-  Future<List<Workout>> getWorkouts() async {
-    return viewModel.getWorkouts();
-  }
 
   void _onNewWorkoutConfirmed(String name) {
     setState(() {
       viewModel.addWorkout(name);
-      workouts = viewModel.getWorkouts();
+      viewModel.getWorkouts();
     });
     Navigator.of(context, rootNavigator: true).pop('dialog');
   }
@@ -64,6 +52,31 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     );
   }
 
+  void _startWorkoutPressed(Workout workout) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new TimerScreen(workout.intervals)));
+  }
+
+  Text buildDurationText(int seconds){
+    int min = seconds ~/ 60;
+    int sec = seconds % 60;
+    String minString = min.toString();
+    String secString = sec.toString();
+
+    if (min < 10) {
+      minString = "0${min.toString()}";
+    }
+
+    if (sec < 10) {
+      secString = "0${sec.toString()}";
+    }
+
+    return Text("Duration " + minString + ":" + secString);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +91,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
         ],
       ),
       body: FutureBuilder<List>(
-          future: workouts,
+          future: viewModel.workouts,
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (snapshot.hasError) {
               return Container();
@@ -86,23 +99,25 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
               return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (buildContext, int index) {
+                    Workout workout = snapshot.data[index];
                     return Dismissible(
-                      key: Key(snapshot.data[index].id.toString()),
+                      key: Key(workout.id.toString()),
                       background: Container(
                         child: Center(child: Text("Delete workout")),
                         color: Colors.red,
                       ),
                       onDismissed: (direction) {
-                        _deleteWorkout(snapshot.data[index].id);
+                        _deleteWorkout(workout.id);
 
                         Scaffold.of(context).showSnackBar(SnackBar(
                             content:
-                                Text("${snapshot.data[index].name} deleted")));
+                                Text("${workout.name} deleted")));
                         snapshot.data.removeAt(index);
                       },
                       child: Card(
                         child: ListTile(
-                          title: Text((snapshot.data[index]).name),
+                          title: Text(workout.name),
+                          subtitle: buildDurationText(viewModel.workoutDurationInSeconds(workout)),
                           trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
@@ -110,14 +125,22 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                   icon: Icon(Icons.edit),
                                   splashColor: Colors.amber,
                                   onPressed: () {
-                                    _editWorkoutPressed(snapshot.data[index].id,
-                                        snapshot.data[index].name, context);
+                                    _editWorkoutPressed(workout.id,
+                                        workout.name, context);
+                                  },
+                                ),
+                                IconButton(
+                                  iconSize: 40,
+                                  color: Colors.red,
+                                  icon: Icon(Icons.play_circle_filled),
+                                  splashColor: Colors.amber,
+                                  onPressed: () {
+                                    _startWorkoutPressed(workout);
                                   },
                                 ),
                               ]),
                         ),
                         elevation: 5,
-                        color: Colors.orange,
                       ),
                     );
                   });

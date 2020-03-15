@@ -15,4 +15,11 @@ class WorkInterval{
       'workoutid': workoutId
     };
   }
+
+  @override
+  String toString() {
+    return 'WorkInterval{id: $id, description: $description, duration: $duration, rest: $rest}';
+  }
+
+
 }
