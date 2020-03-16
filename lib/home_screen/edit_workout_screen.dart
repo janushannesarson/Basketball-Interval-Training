@@ -8,9 +8,10 @@ class EditWorkoutScreen extends StatefulWidget {
   final int workoutId;
   final String workoutName;
   final BuildContext scaffoldContext;
+  final void Function() fetchWorkoutsCallBack;
 
   EditWorkoutScreen(
-      {Key key, this.workoutId, this.workoutName, this.scaffoldContext})
+      {Key key, this.fetchWorkoutsCallBack, this.workoutId, this.workoutName, this.scaffoldContext})
       : super(key: key);
 
   @override
@@ -23,7 +24,6 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     viewModel = EditWorkoutScreenViewModel(workoutId: widget.workoutId);
     intervals = viewModel.getIntervals();
     super.initState();
@@ -96,8 +96,8 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
   }
 
   Future<bool> _onBackPressed() async {
-    viewModel.saveWorkout();
-
+    await viewModel.saveWorkout();
+    widget.fetchWorkoutsCallBack();
     return true;
   }
 
@@ -114,15 +114,6 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.workoutName}"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.play_circle_filled),
-            tooltip: "Start workout",
-            onPressed: () {
-              _startWorkoutPressed();
-            },
-          )
-        ],
       ),
       body: WillPopScope(
         onWillPop: _onBackPressed,

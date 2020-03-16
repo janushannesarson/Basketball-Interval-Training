@@ -18,7 +18,7 @@ class EditWorkoutScreenViewModel {
     intervals.insert(newIndex, x);
   }
 
-  void saveWorkout(){
+  Future saveWorkout() async{
     for(WorkInterval interval in intervals){
       dao.deleteInterval(interval);
     }

@@ -14,9 +14,10 @@ class NewIntervalDialog extends StatelessWidget {
   //test comment
   final void Function(String exercise, int duration, int rest) onAddConfirmed;
 
-  void _addIntervalPressed() {
+  void _addIntervalPressed(BuildContext context) {
     onAddConfirmed(exerciseCtrl.text, int.parse(durationCtrl.text),
         int.parse(restCtrl.text));
+    Navigator.of(context).pop();
   }
 
   void _exerciseCatalogPressed(BuildContext context) async {
@@ -102,7 +103,9 @@ class NewIntervalDialog extends StatelessWidget {
             ),
             FlatButton(
                 color: Colors.lightBlue,
-                onPressed: _addIntervalPressed,
+                onPressed: () {
+                  _addIntervalPressed(context);
+                },
                 child: Text("Add interval"))
           ],
         ),

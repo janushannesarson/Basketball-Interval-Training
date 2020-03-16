@@ -44,6 +44,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
               workoutId: id,
               workoutName: workoutName,
               scaffoldContext: scaffoldContext,
+              fetchWorkoutsCallBack: _fetchWorkoutsCallBack,
             ));
 
     Navigator.push(
@@ -52,15 +53,21 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     );
   }
 
+  void _fetchWorkoutsCallBack() {
+    setState(() {
+      viewModel.getWorkouts();
+    });
+  }
+
   void _startWorkoutPressed(Workout workout) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (BuildContext context) =>
-            new TimerScreen(workout.intervals)));
+                new TimerScreen(workout.intervals)));
   }
 
-  Text buildDurationText(int seconds){
+  Text buildDurationText(int seconds) {
     int min = seconds ~/ 60;
     int sec = seconds % 60;
     String minString = min.toString();
@@ -80,15 +87,14 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          _onNewWorkoutPressed(context);
+        },
+      ),
       appBar: AppBar(
         title: Text("Your Workouts"),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                _onNewWorkoutPressed(context);
-              })
-        ],
       ),
       body: FutureBuilder<List>(
           future: viewModel.workouts,
@@ -109,32 +115,36 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                       onDismissed: (direction) {
                         _deleteWorkout(workout.id);
 
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content:
-                                Text("${workout.name} deleted")));
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(content: Text("${workout.name} deleted")));
                         snapshot.data.removeAt(index);
                       },
                       child: Card(
                         child: ListTile(
                           title: Text(workout.name),
-                          subtitle: buildDurationText(viewModel.workoutDurationInSeconds(workout)),
+                          subtitle: buildDurationText(
+                              viewModel.workoutDurationInSeconds(workout)),
                           trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 IconButton(
+                                  iconSize: 40,
+                                  tooltip: "Edit",
+                                  color: Colors.red,
                                   icon: Icon(Icons.edit),
                                   splashColor: Colors.amber,
                                   onPressed: () {
-                                    _editWorkoutPressed(workout.id,
-                                        workout.name, context);
+                                    _editWorkoutPressed(
+                                        workout.id, workout.name, context);
                                   },
                                 ),
                                 IconButton(
                                   iconSize: 40,
-                                  color: Colors.red,
+                                  tooltip: "Start",
+                                  color: Colors.green,
                                   icon: Icon(Icons.play_circle_filled),
                                   splashColor: Colors.amber,
-                                  onPressed: () {
+                                  onPressed: workout.intervals.isEmpty ? null : () {
                                     _startWorkoutPressed(workout);
                                   },
                                 ),
