@@ -6,6 +6,8 @@ class WorkInterval{
 
   WorkInterval({this.id, this.description, this.duration, this.rest});
 
+  int get totalSeconds => this.duration + this.rest;
+
   Map<String, dynamic> toMap(int workoutId){
     return {
       'id': id,

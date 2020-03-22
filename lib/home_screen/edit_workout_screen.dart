@@ -124,10 +124,16 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
               return Container();
             } else if (snapshot.hasData) {
               viewModel.intervals = snapshot.data;
-              return ReorderableListView(
-                onReorder: _onReorder,
-                children: convertToCards(snapshot.data),
-              );
+              if(viewModel.intervals.isNotEmpty){
+                return ReorderableListView(
+                  onReorder: _onReorder,
+                  children: convertToCards(snapshot.data),
+                );
+              } else {
+                return Center(child: RaisedButton(child: Text("Click to add interval"), onPressed: () {
+                  _addIntervalDialog();
+                },));
+              }
             } else {
               return Center(child: CircularProgressIndicator());
             }

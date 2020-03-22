@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:basketball_workouts/util/text_to_speech.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:quiver/async.dart';
 
@@ -8,110 +9,127 @@ import 'package:basketball_workouts/model/work_interval.dart';
 enum TimerMode {
   duration,
   rest,
-  stopped,
-  paused
 }
 
-class TimerScreenViewModel {
+class TimerScreenViewModel extends ChangeNotifier {
+  final second = Duration(seconds: 1);
   final List<WorkInterval> intervals;
-  var timer = "00:00";
   void Function(int) _callBack;
   void Function(int) _scrollCallBack;
-  CountdownTimer countdownTimer;
-  var progress = 0;
-  //var cancelPressed = false;
-  //var startPressed = false;
-  TimerMode mode = TimerMode.stopped;
-  TextToSpeech tts;
+  void Function() _popCallBack;
+  Stopwatch stopwatch;
+  var intervalIndex = 0;
+  var _intervalDuration = 0;
 
-  TimerScreenViewModel(this.intervals, this._callBack, this._scrollCallBack){
-    initTts();
+  int get intervalDuration => (mode == TimerMode.duration
+      ? intervals[intervalIndex].duration
+      : intervals[intervalIndex].rest) - _intervalDuration;
+  TimerMode mode;
+  TextToSpeech tts;
+  int workoutLengthInSeconds;
+
+  TimerScreenViewModel(
+      this.intervals, this._callBack, this._scrollCallBack, this._popCallBack) {
+    workoutLengthInSeconds = getWorkoutLengthInSeconds();
+    _swatch = Stopwatch();
+    _initTts();
   }
 
-  void initTts() async {
+  void _initTts() async {
     tts = await TextToSpeech.newInstance();
   }
 
+  Stopwatch _swatch;
+  Timer _timer;
 
-  void startTimer() {
-    tts?.speak(intervals[progress].description);
-    mode = TimerMode.duration;
-    //startPressed = true;
-    final interval = intervals[progress];
+  Duration get currentDuration => _currentDuration;
+  Duration _currentDuration = Duration.zero;
+  int get workoutRemaining => workoutLengthInSeconds - _currentDuration.inSeconds;
 
-    countdownTimer = new CountdownTimer(
-        Duration(seconds: interval.duration), Duration(seconds: 0));
+  bool get isRunning => _timer != null;
 
-    countdownTimer.listen((onData) {
-      _callBack(onData.remaining.inSeconds);
-    }, onDone: () => {
-      _durationDone()
-    });
-  }
+  void _onTick(Timer timer) {
+    _currentDuration = _swatch.elapsed;
 
-  void _durationDone() {
-    if(mode != TimerMode.stopped){
-      _startRest();
-    }
-  }
+    _intervalDuration++;
 
-  void _startRest(){
-    tts?.speak("rest");
-    mode = TimerMode.rest;
-    countdownTimer = new CountdownTimer(
-        Duration(seconds: intervals[progress].rest), Duration(seconds: 0));
+    if (mode == TimerMode.duration &&
+        _intervalDuration == intervals[intervalIndex].duration) {
+      mode = TimerMode.rest;
+      _intervalDuration = 0;
+      tts.speak("REST");
+    } else if (mode == TimerMode.rest &&
+        _intervalDuration == (intervals[intervalIndex].rest)) {
+      mode = TimerMode.duration;
+      _intervalDuration = 0;
+      intervalIndex++;
+      _scrollCallBack(intervalIndex);
 
-    countdownTimer.listen((onData) {
-      _callBack(onData.remaining.inSeconds);
-    }, onDone: () => {
-      _restDone()
-    });
-  }
-
-  void _restDone() {
-    if(mode != TimerMode.stopped){
-      progress += 1;
-      if(progress < intervals.length){
-        _scrollCallBack(progress);
-        startTimer();
+      if (intervalIndex >= intervals.length) {
+        //check if workout is completed
+        tts.speak("Workout completed");
+        _popCallBack();
       } else {
-        resetTimer();
+        tts.speak(intervals[intervalIndex].description);
       }
     }
 
+    notifyListeners();
   }
 
-  void resetTimer() {
-    mode = TimerMode.stopped;
-    progress = 0;
-    countdownTimer.cancel();
-    _callBack(0);
+  void start() {
+    if (_timer != null) return;
+    if (mode == null) {
+      mode = TimerMode.duration;
+    }
+
+    _timer = Timer.periodic(Duration(seconds: 1), _onTick);
+    _swatch.start();
+    tts.speak(intervals[intervalIndex].description);
+
+    notifyListeners();
   }
 
-  String getExercise(){
-    return intervals[progress].description;
+  void stop() {
+    _timer?.cancel();
+    _timer = null;
+    _swatch.stop();
+    _currentDuration = _swatch.elapsed;
+
+    notifyListeners();
   }
 
-  double getProgressPercentage(int seconds){
+  void reset() {
+    stop();
+    _swatch.reset();
+    _currentDuration = Duration.zero;
+
+    notifyListeners();
+  }
+
+  String getExercise() {
+    return intervals[intervalIndex].description;
+  }
+
+  double getProgressPercentage() {
     double res = 1;
 
-    if(mode == TimerMode.duration){
-      res = seconds / intervals[progress].duration;
-    }else if(mode == TimerMode.rest){
-      res = seconds / intervals[progress].rest;
+    if (mode == TimerMode.duration) {
+      res = intervalDuration / intervals[intervalIndex].duration;
+    } else if (mode == TimerMode.rest) {
+      res = intervalDuration / intervals[intervalIndex].rest;
     }
 
     return res;
   }
 
-  int getWorkoutLengthInSeconds(){
+  int getWorkoutLengthInSeconds() {
     int res = 0;
 
-    for(var interval in intervals){
+    for (var interval in intervals) {
       res += interval.duration + interval.rest;
     }
 
     return res;
   }
-
 }
