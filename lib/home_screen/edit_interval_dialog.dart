@@ -1,27 +1,45 @@
-import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/catalog_screen/catalog_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class NewIntervalDialog extends StatefulWidget {
-  NewIntervalDialog({Key key, this.onAddConfirmed}) : super(key: key);
+class EditIntervalDialog extends StatefulWidget {
+  EditIntervalDialog(
+      {Key key,
+      @required this.onSaveConfirmed,
+      @required this.intervalId,
+      @required this.exercise,
+      @required this.duration,
+      @required this.rest})
+      : super(key: key);
 
-  final void Function(String exercise, int duration, int rest) onAddConfirmed;
+  final int intervalId;
+  final String exercise;
+  final int duration;
+  final int rest;
+  final void Function(int intervalId, String exercise, int duration, int rest)
+      onSaveConfirmed;
 
   @override
-  _NewIntervalDialogState createState() => _NewIntervalDialogState();
+  _EditIntervalDialogState createState() => _EditIntervalDialogState();
 }
 
-class _NewIntervalDialogState extends State<NewIntervalDialog> {
+class _EditIntervalDialogState extends State<EditIntervalDialog> {
   final exerciseCtrl = TextEditingController();
 
-  double workPeriod = 10.0;
+  double workPeriod;
 
-  double restPeriod = 10.0;
+  double restPeriod;
 
-  void _addIntervalPressed(BuildContext context) {
-    widget.onAddConfirmed(
-        exerciseCtrl.text, workPeriod.toInt(), restPeriod.toInt());
+  @override
+  void initState() {
+    exerciseCtrl.text = widget.exercise;
+    workPeriod = widget.duration.toDouble();
+    restPeriod = widget.rest.toDouble();
+  }
+
+  void _saveChangesPressed(BuildContext context) {
+    widget.onSaveConfirmed(widget.intervalId, exerciseCtrl.text,
+        workPeriod.toInt(), restPeriod.toInt());
     Navigator.of(context).pop();
   }
 
@@ -60,8 +78,6 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = AppLocalizations.of(context);
-
     return Dialog(
       child: SingleChildScrollView(
         padding: EdgeInsets.all(0),
@@ -76,7 +92,7 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text(
-                    lang.getString(AppLocalizations.NEW_INTERVAL),
+                    "New interval",
                     style: TextStyle(fontSize: 20),
                   )
                 ],
@@ -94,14 +110,14 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: lang.getString(AppLocalizations.EXERCISE),
+                        labelText: 'Exercise',
                       ),
                     ),
                   ),
                   Container(
                       padding: EdgeInsets.all(5),
                       child: RaisedButton(
-                        child: Text(lang.getString(AppLocalizations.CATALOG)),
+                        child: Text("Catalog"),
                         onPressed: () => {_exerciseCatalogPressed(context)},
                       ))
                 ],
@@ -177,7 +193,7 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                   onPressed: () {
                     setState(() {
                       if (restPeriod < 300) {
-                        restPeriod ++;
+                        restPeriod++;
                       }
                     });
                   },
@@ -203,9 +219,9 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                 onPressed: exerciseCtrl.text.isEmpty
                     ? null
                     : () {
-                        _addIntervalPressed(context);
+                        _saveChangesPressed(context);
                       },
-                child: Text(lang.getString(AppLocalizations.ADD_INTERVAL)))
+                child: Text("Save changes"))
           ],
         ),
       ),

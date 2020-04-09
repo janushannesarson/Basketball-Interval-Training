@@ -1,5 +1,4 @@
 import 'package:basketball_workouts/database/workouts_dao.dart';
-import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:basketball_workouts/model/workout.dart';
 
 class WorkoutsScreenViewModel{

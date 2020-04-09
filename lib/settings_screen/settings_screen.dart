@@ -1,8 +1,7 @@
+import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/settings_screen/settings_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -14,9 +13,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context);
+
     return Scaffold(
         appBar: AppBar(
-          title: Text("Settings"),
+          title: Text(lang.getString(AppLocalizations.SETTINGS)),
         ),
         body: FutureBuilder(
             future: SettingsScreenViewModel.newInstance(),
@@ -31,10 +32,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text("Text to speech enabled"),),
+                          Expanded(
+                            child: Text(lang.getString(AppLocalizations.TEXT_TO_SPEECH_ENABLED)),
+                          ),
                           Switch(
                             value: viewModel.ttsEnabled,
-                            onChanged: (enabled){
+                            onChanged: (enabled) {
                               setState(() {
                                 viewModel.ttsEnabled = enabled;
                               });
@@ -48,16 +51,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text("Text to speech volume"),),
+                          Expanded(
+                            child: Text(lang.getString(AppLocalizations.TEXT_TO_SPEECH_VOLUME)),
+                          ),
                           Slider(
                             value: viewModel.ttsVolume,
                             min: 0.0,
                             max: 1.0,
-                            onChanged: !viewModel.ttsEnabled ? null : (volume) {
-                              setState(() {
-                                viewModel.ttsVolume = volume;
-                              });
-                            },
+                            onChanged: !viewModel.ttsEnabled
+                                ? null
+                                : (volume) {
+                                    setState(() {
+                                      viewModel.ttsVolume = volume;
+                                    });
+                                  },
                             divisions: 20,
                             label: "${(viewModel.ttsVolume * 100).toInt()}%",
                           ),
@@ -69,14 +76,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text("Text to speech rate")),
+                          Expanded(child: Text(lang.getString(AppLocalizations.TEXT_TO_SPEECH_RATE))),
                           Slider(
                             value: viewModel.speechRate,
-                            onChanged: !viewModel.ttsEnabled ? null : (rate) {
-                              setState(() {
-                                viewModel.speechRate = rate;
-                              });
-                            },
+                            onChanged: !viewModel.ttsEnabled
+                                ? null
+                                : (rate) {
+                                    setState(() {
+                                      viewModel.speechRate = rate;
+                                    });
+                                  },
                             divisions: 2,
                             min: 0.75,
                             max: 1.25,

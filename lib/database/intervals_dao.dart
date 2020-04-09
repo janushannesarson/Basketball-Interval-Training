@@ -8,10 +8,6 @@ class IntervalsDao {
     // Get a reference to the database.
     final Database db = await DataBaseRepository.intervalsDatabase;
 
-    // Insert the Dog into the correct table. You might also specify the
-    // `conflictAlgorithm` to use in case the same dog is inserted twice.
-    //
-    // In this case, replace any previous data.
     await db.insert(
       'intervals',
       interval.toMap(workoutId),
@@ -19,10 +15,18 @@ class IntervalsDao {
     );
   }
 
-  Future<void> deleteInterval(WorkInterval interval) async{
+  Future<void> deleteInterval(WorkInterval interval) async {
     final Database db = await DataBaseRepository.intervalsDatabase;
 
     await db.delete('intervals', where: "id = ?", whereArgs: [interval.id]);
+  }
+
+  Future<void> updateInterval(WorkInterval interval) async {
+    final Database db = await DataBaseRepository.intervalsDatabase;
+
+    await db.rawUpdate(
+        "UPDATE intervals SET description = ?, duration = ?, rest = ? WHERE id = ?",
+        [interval.description, interval.duration, interval.rest, interval.id]);
   }
 
   Future<List<WorkInterval>> getIntervals(int workoutId) async {
@@ -33,11 +37,10 @@ class IntervalsDao {
 
     return List.generate(maps.length, (i) {
       return WorkInterval(
-        id: maps[i]['id'],
-        description: maps[i]['description'],
-        duration: maps[i]['duration'],
-        rest: maps[i]['rest']
-      );
+          id: maps[i]['id'],
+          description: maps[i]['description'],
+          duration: maps[i]['duration'],
+          rest: maps[i]['rest']);
     });
   }
 }

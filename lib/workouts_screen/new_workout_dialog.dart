@@ -1,3 +1,4 @@
+import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,8 @@ class NewWorkoutDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context);
+
     return Dialog(
       child: Container(
         padding: EdgeInsets.all(0),
@@ -29,7 +32,7 @@ class NewWorkoutDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text(
-                    "New Workout",
+                    lang.getString(AppLocalizations.NEW_WORKOUT),
                     style: TextStyle(fontSize: 20),
                   )
                 ],
@@ -41,14 +44,14 @@ class NewWorkoutDialog extends StatelessWidget {
                 controller: nameCtrl,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Workout name',
+                  labelText: lang.getString(AppLocalizations.WORKOUT_NAME),
                 ),
               ),
             ),
             FlatButton(
                 color: Colors.lightBlue,
                 onPressed: _confirmWorkoutPressed,
-                child: Text("Create workout"))
+                child: Text(lang.getString(AppLocalizations.CREATE_WORKOUT)))
           ],
         ),
       ),

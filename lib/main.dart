@@ -1,11 +1,25 @@
+import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/settings_screen/settings_screen.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main(){
-  runApp( MyApp());
+void main() {
+  runApp(MaterialApp(
+      localizationsDelegates: [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('es')
+      ],
+      localeResolutionCallback:
+          (Locale locale, Iterable<Locale> supportedLocales) {
+        return locale;
+      },
+      home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -34,19 +48,34 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context);
+
     return MaterialApp(
-      title: 'Flutter Demo',
+      localizationsDelegates: [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('es')
+      ],
+      localeResolutionCallback:
+          (Locale locale, Iterable<Locale> supportedLocales) {
+        return locale;
+      },
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         body: _callScreen(),
         bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: Icon(Icons.home), title: Text("Workouts")),
+                icon: Icon(Icons.home),
+                title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), title: Text("Settings"))
+                icon: Icon(Icons.settings), title: Text(lang.getString(AppLocalizations.SETTINGS)))
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[800],

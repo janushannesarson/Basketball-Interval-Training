@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:basketball_workouts/util/text_to_speech.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:quiver/async.dart';
 
 import 'package:basketball_workouts/model/work_interval.dart';
 

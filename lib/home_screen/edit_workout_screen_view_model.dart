@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:basketball_workouts/database/intervals_dao.dart';
 import 'package:basketball_workouts/model/work_interval.dart';
 
@@ -18,12 +20,12 @@ class EditWorkoutScreenViewModel {
     intervals.insert(newIndex, x);
   }
 
-  Future saveWorkout() async{
-    for(WorkInterval interval in intervals){
+  Future saveWorkout() async {
+    for (WorkInterval interval in intervals) {
       dao.deleteInterval(interval);
     }
 
-    for(WorkInterval interval in intervals){
+    for (WorkInterval interval in intervals) {
       addInterval(interval.description, interval.duration, interval.rest);
     }
   }
@@ -35,7 +37,7 @@ class EditWorkoutScreenViewModel {
     dao.insertInterval(interval, workoutId);
   }
 
-  void deleteInterval(WorkInterval interval){
+  void deleteInterval(WorkInterval interval) {
     dao.deleteInterval(interval);
     intervals.remove(interval);
   }
@@ -44,4 +46,13 @@ class EditWorkoutScreenViewModel {
     return dao.getIntervals(workoutId);
   }
 
+  void updateInterval(int intervalId, String exercise, int duration, int rest) {
+
+    print("$intervalId, $exercise, $duration, $rest");
+
+    WorkInterval interval = new WorkInterval(
+        id: intervalId, description: exercise, duration: duration, rest: rest);
+
+    dao.updateInterval(interval);
+  }
 }

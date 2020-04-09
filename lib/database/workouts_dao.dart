@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:basketball_workouts/database/database_repository.dart';
 import 'package:basketball_workouts/database/intervals_dao.dart';
-import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:basketball_workouts/model/workout.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WorkoutsDao {

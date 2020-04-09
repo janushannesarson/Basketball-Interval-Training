@@ -1,7 +1,10 @@
+import 'package:basketball_workouts/app_localizations.dart';
+import 'package:basketball_workouts/home_screen/edit_interval_dialog.dart';
 import 'package:basketball_workouts/home_screen/edit_workout_screen_view_model.dart';
 import 'package:basketball_workouts/home_screen/new_interval_dialog.dart';
 import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:basketball_workouts/timer_screen/timer_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EditWorkoutScreen extends StatefulWidget {
@@ -11,7 +14,11 @@ class EditWorkoutScreen extends StatefulWidget {
   final void Function() fetchWorkoutsCallBack;
 
   EditWorkoutScreen(
-      {Key key, this.fetchWorkoutsCallBack, this.workoutId, this.workoutName, this.scaffoldContext})
+      {Key key,
+      this.fetchWorkoutsCallBack,
+      this.workoutId,
+      this.workoutName,
+      this.scaffoldContext})
       : super(key: key);
 
   @override
@@ -64,6 +71,25 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
     });
   }
 
+  void _onSaveConfirmed(int intervalId, String exercise, int duration, int rest) {
+    setState(() {
+      viewModel.updateInterval(intervalId, exercise, duration, rest);
+      intervals = viewModel.getIntervals();
+    });
+  }
+
+  void _editIntervalPressed(int intervalId, String exercise, int duration, int rest) {
+    showDialog(
+        context: context,
+        child: EditIntervalDialog(
+          intervalId: intervalId,
+          onSaveConfirmed: _onSaveConfirmed,
+          exercise: exercise,
+          duration: duration,
+          rest: rest,
+        ));
+  }
+
   List<Widget> convertToCards(List<WorkInterval> intervals) {
     List<Widget> result = new List();
 
@@ -85,7 +111,23 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
               title: Text(interval.description),
               subtitle:
                   Text("Duration: ${interval.duration} Rest: ${interval.rest}"),
-              trailing: Icon(Icons.drag_handle),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    iconSize: 40,
+                    tooltip: "Edit",
+                    color: Colors.red,
+                    icon: Icon(Icons.edit),
+                    splashColor: Colors.amber,
+                    onPressed: () {
+                      _editIntervalPressed(interval.id, interval.description,
+                          interval.duration, interval.rest);
+                    },
+                  ),
+                  Icon(Icons.drag_handle),
+                ],
+              ),
             ),
           ),
         ),
@@ -111,6 +153,8 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.workoutName}"),
@@ -124,15 +168,19 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
               return Container();
             } else if (snapshot.hasData) {
               viewModel.intervals = snapshot.data;
-              if(viewModel.intervals.isNotEmpty){
+              if (viewModel.intervals.isNotEmpty) {
                 return ReorderableListView(
                   onReorder: _onReorder,
                   children: convertToCards(snapshot.data),
                 );
               } else {
-                return Center(child: RaisedButton(child: Text("Click to add interval"), onPressed: () {
-                  _addIntervalDialog();
-                },));
+                return Center(
+                    child: RaisedButton(
+                  child: Text(lang.getString(AppLocalizations.CLICK_TO_ADD_INTERVAL)),
+                  onPressed: () {
+                    _addIntervalDialog();
+                  },
+                ));
               }
             } else {
               return Center(child: CircularProgressIndicator());
