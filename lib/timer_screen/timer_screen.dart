@@ -17,7 +17,6 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
-  String intervalTimer;
   String intervalLengthText;
   TimerScreenViewModel viewModel;
   ItemScrollController _scrollController = ItemScrollController();
@@ -29,14 +28,12 @@ class _TimerScreenState extends State<TimerScreen> {
     super.initState();
     viewModel =
         TimerScreenViewModel(widget.intervals, callBack, _scrollToInterval, _pop);
-    intervalTimer = _secondsToString(viewModel.intervals[0].duration);
     workoutProgress = viewModel.getWorkoutLengthInSeconds();
     workoutTimer = _secondsToString(workoutProgress);
   }
 
   void callBack(int timerCount) {
     setState(() {
-      this.intervalTimer = _secondsToString(timerCount);
       workoutTimer = _secondsToString(timerCount);
     });
   }
@@ -52,7 +49,15 @@ class _TimerScreenState extends State<TimerScreen> {
   }
 
   void _stopPressed() {
-    viewModel.stop();
+    setState(() {
+      viewModel.stop();
+    });
+  }
+
+  void _resetPressed(){
+    setState(() {
+      viewModel.reset();
+    });
   }
 
   Future<bool> _onBackPressed() {
@@ -221,9 +226,9 @@ class _TimerScreenState extends State<TimerScreen> {
                             Consumer<TimerScreenViewModel>(
                               builder: (context, viewModel, child) {
                                 return RaisedButton(
-                                  onPressed: viewModel.isRunning ? _stopPressed : null,
+                                  onPressed: viewModel.isRunning ? _stopPressed : _resetPressed,
                                   color: Colors.red,
-                                  child: Text("Stop"),
+                                  child: Text(viewModel.isRunning ? "Stop" : "Reset"),
                                 );
                               },
                             ),

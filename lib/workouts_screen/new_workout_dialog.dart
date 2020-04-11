@@ -1,17 +1,22 @@
 import 'package:basketball_workouts/app_localizations.dart';
-import 'package:basketball_workouts/model/work_interval.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class NewWorkoutDialog extends StatelessWidget {
+class NewWorkoutDialog extends StatefulWidget {
   NewWorkoutDialog({Key key, this.onNewWorkoutConfirmed}) : super(key: key);
-
-  final nameCtrl = TextEditingController();
 
   final void Function(String name) onNewWorkoutConfirmed;
 
+  @override
+  _NewWorkoutDialogState createState() => _NewWorkoutDialogState();
+}
+
+class _NewWorkoutDialogState extends State<NewWorkoutDialog> {
+  final nameCtrl = TextEditingController();
+
+  var validName = false;
+
   void _confirmWorkoutPressed() {
-    onNewWorkoutConfirmed(nameCtrl.text);
+    widget.onNewWorkoutConfirmed(nameCtrl.text);
   }
 
   @override
@@ -46,11 +51,17 @@ class NewWorkoutDialog extends StatelessWidget {
                   border: OutlineInputBorder(),
                   labelText: lang.getString(AppLocalizations.WORKOUT_NAME),
                 ),
+                onChanged: (String string) {
+                  setState(() {
+                    validName = string.isNotEmpty;
+                  });
+                },
               ),
             ),
             FlatButton(
                 color: Colors.lightBlue,
-                onPressed: _confirmWorkoutPressed,
+                disabledColor: Colors.grey,
+                onPressed: validName ? _confirmWorkoutPressed : null,
                 child: Text(lang.getString(AppLocalizations.CREATE_WORKOUT)))
           ],
         ),

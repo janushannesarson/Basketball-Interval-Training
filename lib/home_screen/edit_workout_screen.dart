@@ -93,7 +93,9 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
   List<Widget> convertToCards(List<WorkInterval> intervals) {
     List<Widget> result = new List();
 
-    for (var interval in intervals) {
+    for (int i=0; i < intervals.length; i++) {
+      final interval = intervals[i];
+
       result.add(Dismissible(
         background: Container(
           child: Center(child: Text("Delete interval")),
@@ -108,7 +110,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
         child: Container(
           child: Card(
             child: ListTile(
-              title: Text(interval.description),
+              title: Text("#${i+1} " + interval.description),
               subtitle:
                   Text("Duration: ${interval.duration} Rest: ${interval.rest}"),
               trailing: Row(

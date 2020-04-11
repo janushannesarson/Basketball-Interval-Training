@@ -25,6 +25,7 @@ class TimerScreenViewModel extends ChangeNotifier {
   TimerMode mode;
   TextToSpeech tts;
   int workoutLengthInSeconds;
+  bool stopPressed = false;
 
   TimerScreenViewModel(
       this.intervals, this._callBack, this._scrollCallBack, this._popCallBack) {
@@ -72,6 +73,10 @@ class TimerScreenViewModel extends ChangeNotifier {
       }
     }
 
+    if(stopPressed){
+
+    }
+
     notifyListeners();
   }
 
@@ -83,12 +88,19 @@ class TimerScreenViewModel extends ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), _onTick);
     _swatch.start();
-    tts.speak(intervals[intervalIndex].description);
+
+    if(mode == TimerMode.duration){
+      tts.speak(intervals[intervalIndex].description);
+    } else {
+      tts.speak("Rest");
+    }
+
 
     notifyListeners();
   }
 
   void stop() {
+    stopPressed = true;
     _timer?.cancel();
     _timer = null;
     _swatch.stop();
@@ -101,6 +113,8 @@ class TimerScreenViewModel extends ChangeNotifier {
     stop();
     _swatch.reset();
     _currentDuration = Duration.zero;
+    _intervalDuration = 0;
+    intervalIndex = 0;
 
     notifyListeners();
   }
