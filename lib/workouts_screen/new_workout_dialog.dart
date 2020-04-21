@@ -2,9 +2,10 @@ import 'package:basketball_workouts/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class NewWorkoutDialog extends StatefulWidget {
-  NewWorkoutDialog({Key key, this.onNewWorkoutConfirmed}) : super(key: key);
-
+  final List takenNames;
   final void Function(String name) onNewWorkoutConfirmed;
+
+  NewWorkoutDialog({Key key, this.takenNames, this.onNewWorkoutConfirmed}) : super(key: key);
 
   @override
   _NewWorkoutDialogState createState() => _NewWorkoutDialogState();
@@ -17,6 +18,10 @@ class _NewWorkoutDialogState extends State<NewWorkoutDialog> {
 
   void _confirmWorkoutPressed() {
     widget.onNewWorkoutConfirmed(nameCtrl.text);
+  }
+
+  verifyName(String string){
+    validName = string.isNotEmpty && !widget.takenNames.contains(string);
   }
 
   @override
@@ -53,7 +58,7 @@ class _NewWorkoutDialogState extends State<NewWorkoutDialog> {
                 ),
                 onChanged: (String string) {
                   setState(() {
-                    validName = string.isNotEmpty;
+                    verifyName(string);
                   });
                 },
               ),

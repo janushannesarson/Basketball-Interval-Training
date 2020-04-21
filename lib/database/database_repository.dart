@@ -9,7 +9,7 @@ class DataBaseRepository {
       join(path, 'workouts_database.db'),
       onCreate: (db, version) {
         return db
-            .execute("CREATE TABLE workouts(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
+            .execute("CREATE TABLE workouts(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE NOT NULL)");
       },
       version: 1,
     );

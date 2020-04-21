@@ -3,6 +3,7 @@ import 'package:basketball_workouts/util/text_to_speech.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:basketball_workouts/model/work_interval.dart';
+import 'package:flutter/material.dart';
 
 enum TimerMode {
   duration,
@@ -10,57 +11,87 @@ enum TimerMode {
 }
 
 class TimerScreenViewModel extends ChangeNotifier {
-  final second = Duration(seconds: 1);
   final List<WorkInterval> intervals;
-  void Function(int) _callBack;
   void Function(int) _scrollCallBack;
   void Function() _popCallBack;
-  Stopwatch stopwatch;
   var intervalIndex = 0;
-  var _intervalDuration = 0;
 
-  int get intervalDuration => (mode == TimerMode.duration
-      ? intervals[intervalIndex].duration
-      : intervals[intervalIndex].rest) - _intervalDuration;
   TimerMode mode;
   TextToSpeech tts;
   int workoutLengthInSeconds;
   bool stopPressed = false;
+  Stopwatch _workoutStopWatch;
+  Timer _timer;
+  Duration checkPoint = Duration.zero;
+
+  Duration get workoutDuration => _workoutStopWatch.elapsed;
+
+  Duration get intervalDuration => _intervalDuration;
+  Duration _intervalDuration = Duration.zero;
+
+  int get workoutRemaining =>
+      workoutLengthInSeconds - _workoutStopWatch.elapsed.inSeconds;
+
+  bool get isRunning => _timer != null;
+
+  List durationCheckPoints;
+  List restCheckPoints;
 
   TimerScreenViewModel(
-      this.intervals, this._callBack, this._scrollCallBack, this._popCallBack) {
+      this.intervals, this._scrollCallBack, this._popCallBack) {
     workoutLengthInSeconds = getWorkoutLengthInSeconds();
-    _swatch = Stopwatch();
+    _workoutStopWatch = Stopwatch();
+    mode = TimerMode.duration;
     _initTts();
+    _initCheckPoints();
+    _intervalDuration = Duration(seconds: durationCheckPoints[0]);
   }
 
   void _initTts() async {
     tts = await TextToSpeech.newInstance();
   }
 
-  Stopwatch _swatch;
-  Timer _timer;
+  void _initCheckPoints() {
+    durationCheckPoints = List(intervals.length);
+    restCheckPoints = List(intervals.length);
 
-  Duration get currentDuration => _currentDuration;
-  Duration _currentDuration = Duration.zero;
-  int get workoutRemaining => workoutLengthInSeconds - _currentDuration.inSeconds;
+    int runningSum = 0;
 
-  bool get isRunning => _timer != null;
+    for (int i = 0; i < intervals.length; i++) {
+      runningSum += intervals[i].duration;
+      durationCheckPoints[i] = runningSum;
+
+      runningSum += intervals[i].rest;
+      restCheckPoints[i] = runningSum;
+    }
+  }
+
+  void _setIntervalDuration() {
+    int toSub;
+
+    if (mode == TimerMode.duration) {
+      toSub = durationCheckPoints[intervalIndex];
+    } else {
+      toSub = restCheckPoints[intervalIndex];
+    }
+
+    int intervalProgressInSeconds = toSub - _workoutStopWatch.elapsed.inSeconds;
+
+    _intervalDuration = Duration(seconds: intervalProgressInSeconds);
+    notifyListeners();
+  }
 
   void _onTick(Timer timer) {
-    _currentDuration = _swatch.elapsed;
-
-    _intervalDuration++;
-
     if (mode == TimerMode.duration &&
-        _intervalDuration == intervals[intervalIndex].duration) {
+        durationCheckPoints[intervalIndex] ==
+            _workoutStopWatch.elapsed.inSeconds) {
       mode = TimerMode.rest;
-      _intervalDuration = 0;
+      _intervalDuration = Duration.zero;
       tts.speak("REST");
     } else if (mode == TimerMode.rest &&
-        _intervalDuration == (intervals[intervalIndex].rest)) {
+        restCheckPoints[intervalIndex] == _workoutStopWatch.elapsed.inSeconds) {
       mode = TimerMode.duration;
-      _intervalDuration = 0;
+      _intervalDuration = Duration.zero;
       intervalIndex++;
       _scrollCallBack(intervalIndex);
 
@@ -73,10 +104,7 @@ class TimerScreenViewModel extends ChangeNotifier {
       }
     }
 
-    if(stopPressed){
-
-    }
-
+    _setIntervalDuration();
     notifyListeners();
   }
 
@@ -87,15 +115,14 @@ class TimerScreenViewModel extends ChangeNotifier {
     }
 
     _timer = Timer.periodic(Duration(seconds: 1), _onTick);
-    _swatch.start();
+    _workoutStopWatch.start();
 
-    if(mode == TimerMode.duration){
+    if (mode == TimerMode.duration) {
       tts.speak(intervals[intervalIndex].description);
     } else {
       tts.speak("Rest");
     }
-
-
+    _setIntervalDuration();
     notifyListeners();
   }
 
@@ -103,18 +130,17 @@ class TimerScreenViewModel extends ChangeNotifier {
     stopPressed = true;
     _timer?.cancel();
     _timer = null;
-    _swatch.stop();
-    _currentDuration = _swatch.elapsed;
-
-    notifyListeners();
+    _workoutStopWatch.stop();
+    _setIntervalDuration();
   }
 
   void reset() {
     stop();
-    _swatch.reset();
-    _currentDuration = Duration.zero;
-    _intervalDuration = 0;
+    mode = TimerMode.duration;
+    _workoutStopWatch.reset();
+    _intervalDuration = Duration(seconds: durationCheckPoints[0]);
     intervalIndex = 0;
+    _scrollCallBack(intervalIndex);
 
     notifyListeners();
   }
@@ -127,9 +153,9 @@ class TimerScreenViewModel extends ChangeNotifier {
     double res = 1;
 
     if (mode == TimerMode.duration) {
-      res = intervalDuration / intervals[intervalIndex].duration;
+      res = intervalDuration.inSeconds / intervals[intervalIndex].duration;
     } else if (mode == TimerMode.rest) {
-      res = intervalDuration / intervals[intervalIndex].rest;
+      res = intervalDuration.inSeconds / intervals[intervalIndex].rest;
     }
 
     return res;

@@ -26,17 +26,16 @@ class _TimerScreenState extends State<TimerScreen> {
   @override
   void initState() {
     super.initState();
-    viewModel =
-        TimerScreenViewModel(widget.intervals, callBack, _scrollToInterval, _pop);
+    viewModel = TimerScreenViewModel(widget.intervals, _scrollToInterval, _pop);
     workoutProgress = viewModel.getWorkoutLengthInSeconds();
     workoutTimer = _secondsToString(workoutProgress);
   }
 
-  void callBack(int timerCount) {
-    setState(() {
-      workoutTimer = _secondsToString(timerCount);
-    });
-  }
+//  void callBack(int timerCount) {
+//    setState(() {
+//      workoutTimer = _secondsToString(timerCount);
+//    });
+//  }
 
   void _scrollToInterval(int index) {
     _scrollController.scrollTo(index: index, duration: Duration(seconds: 1));
@@ -54,7 +53,7 @@ class _TimerScreenState extends State<TimerScreen> {
     });
   }
 
-  void _resetPressed(){
+  void _resetPressed() {
     setState(() {
       viewModel.reset();
     });
@@ -65,7 +64,7 @@ class _TimerScreenState extends State<TimerScreen> {
     _pop();
   }
 
-  void _pop(){
+  void _pop() {
     Navigator.of(context).pop();
   }
 
@@ -73,68 +72,65 @@ class _TimerScreenState extends State<TimerScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Consumer<TimerScreenViewModel>(
-          builder: (context, viewModel, child) {
-            WorkInterval interval = viewModel.intervals[index];
+        Consumer<TimerScreenViewModel>(builder: (context, viewModel, child) {
+          WorkInterval interval = viewModel.intervals[index];
 
-            var color;
-            var icon;
-            var progressIndicator;
+          var color;
+          var icon;
+          var progressIndicator;
 
-            if (viewModel.intervalIndex == index) {
-              progressIndicator = LinearProgressIndicator(
-                value: viewModel.getProgressPercentage(),
-                backgroundColor: Colors.red,
-              );
-              if (viewModel.isRunning) {
-                if(viewModel.mode == TimerMode.duration){
-                  color = Colors.red;
-                  icon = Icons.directions_run;
-                } else if (viewModel.mode == TimerMode.rest) {
-                  color = Colors.green;
-                  icon = Icons.timer;
-                }
-              }
+          if (viewModel.intervalIndex == index) {
+            progressIndicator = LinearProgressIndicator(
+              value: viewModel.getProgressPercentage(),
+              backgroundColor: Colors.red,
+            );
+            if (viewModel.mode == TimerMode.duration) {
+              color = Colors.red;
+              icon = Icons.directions_run;
+            } else if (viewModel.mode == TimerMode.rest) {
+              color = Colors.green;
+              icon = Icons.timer;
             }
+          }
 
-            return Card(
-                elevation: 5,
-                color: color,
-                child: Column(
-                  children: <Widget>[
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Icon(icon),
-                            Expanded(
-                              child: Text(
-                                interval.description,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: false,
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                            progressIndicator != null
-                                ? Text(
-                              _secondsToString(viewModel.intervalDuration),
+          return Card(
+              elevation: 5,
+              color: color,
+              child: Column(
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(icon),
+                          Expanded(
+                            child: Text(
+                              interval.description,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
                               style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w700),
-                            )
-                                : SizedBox(),
-                          ],
-                        ),
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          progressIndicator != null
+                              ? Text(
+                                  _secondsToString(
+                                      viewModel.intervalDuration.inSeconds),
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w700),
+                                )
+                              : SizedBox(),
+                        ],
                       ),
                     ),
-                    progressIndicator != null ? progressIndicator : Container(),
-                  ],
-                ));
-          }
-        ),
+                  ),
+                  progressIndicator != null ? progressIndicator : Container(),
+                ],
+              ));
+        }),
       ],
     );
   }
@@ -181,7 +177,8 @@ class _TimerScreenState extends State<TimerScreen> {
                               return Text(
                                 _secondsToString(viewModel.workoutRemaining),
                                 style: TextStyle(
-                                    fontSize: 100.0, fontWeight: FontWeight.w700),
+                                    fontSize: 100.0,
+                                    fontWeight: FontWeight.w700),
                               );
                             },
                           )
@@ -217,18 +214,22 @@ class _TimerScreenState extends State<TimerScreen> {
                             Consumer<TimerScreenViewModel>(
                               builder: (context, viewModel, child) {
                                 return RaisedButton(
-                                    onPressed: !viewModel.isRunning ? _startPressed : null,
+                                    onPressed: !viewModel.isRunning
+                                        ? _startPressed
+                                        : null,
                                     color: Colors.green,
-                                    child: Text("Start")
-                                );
+                                    child: Text("Start"));
                               },
                             ),
                             Consumer<TimerScreenViewModel>(
                               builder: (context, viewModel, child) {
                                 return RaisedButton(
-                                  onPressed: viewModel.isRunning ? _stopPressed : _resetPressed,
+                                  onPressed: viewModel.isRunning
+                                      ? _stopPressed
+                                      : _resetPressed,
                                   color: Colors.red,
-                                  child: Text(viewModel.isRunning ? "Stop" : "Reset"),
+                                  child: Text(
+                                      viewModel.isRunning ? "Stop" : "Reset"),
                                 );
                               },
                             ),

@@ -21,6 +21,12 @@ class WorkoutsScreenViewModel{
     _workoutsDao.deleteWorkout(id);
   }
 
+  Future<List<String>> getNames() async {
+    final _workouts = await workouts;
+    final names = List.generate(_workouts.length, (i) => _workouts[i].name);
+    return names;
+  }
+
   int workoutDurationInSeconds(Workout workout){
     int sum = 0;
 

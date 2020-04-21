@@ -25,10 +25,11 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     Navigator.of(context, rootNavigator: true).pop('dialog');
   }
 
-  void _onNewWorkoutPressed(BuildContext context) {
+  void _onNewWorkoutPressed(BuildContext context) async {
     showDialog(
         context: context,
         child: NewWorkoutDialog(
+          takenNames: await viewModel.getNames(),
           onNewWorkoutConfirmed: _onNewWorkoutConfirmed,
         ));
   }
