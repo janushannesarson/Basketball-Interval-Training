@@ -140,16 +140,23 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                             trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  IconButton(
-                                    iconSize: 40,
-                                    tooltip: "Edit",
-                                    color: Colors.red,
-                                    icon: Icon(Icons.edit),
-                                    splashColor: Colors.amber,
-                                    onPressed: () {
-                                      _editWorkoutPressed(
-                                          workout.id, workout.name, context);
-                                    },
+                                  SingleChildScrollView(
+                                    child: Column(
+                                      children: <Widget>[
+                                        IconButton(
+                                          iconSize: 40,
+                                          tooltip: "Edit",
+                                          color: Colors.red,
+                                          icon: Icon(Icons.edit),
+                                          splashColor: Colors.amber,
+                                          onPressed: () {
+                                            _editWorkoutPressed(
+                                                workout.id, workout.name, context);
+                                          },
+                                        ),
+                                        Text("Edit"),
+                                      ],
+                                    ),
                                   ),
                                   IconButton(
                                     iconSize: 40,

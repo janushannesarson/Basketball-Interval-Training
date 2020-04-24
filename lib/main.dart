@@ -1,8 +1,10 @@
 import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/settings_screen/settings_screen.dart';
+import 'package:basketball_workouts/theme.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -29,6 +31,26 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: ThemeChanger.newInstance(),
+      builder: (context, snapshot) {
+        return ChangeNotifierProvider<ThemeChanger>(
+          create: (_) => snapshot as ThemeChanger,
+          child: new MaterialAppWithTheme(),
+        );
+      },
+    );
+  }
+}
+
+class MaterialAppWithTheme extends StatefulWidget {
+  @override
+  _MaterialAppWithThemeState createState() => _MaterialAppWithThemeState();
+}
+
+class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
   int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
@@ -49,24 +71,20 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
+    final theme = Provider.of<ThemeChanger>(context);
 
     return MaterialApp(
+      theme: theme.getTheme(),
       localizationsDelegates: [
         AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en'),
-        const Locale('es')
-      ],
+      supportedLocales: [const Locale('en'), const Locale('es')],
       localeResolutionCallback:
           (Locale locale, Iterable<Locale> supportedLocales) {
         return locale;
       },
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: Scaffold(
         body: _callScreen(),
         bottomNavigationBar: BottomNavigationBar(
@@ -75,7 +93,8 @@ class _MyAppState extends State<MyApp> {
                 icon: Icon(Icons.home),
                 title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), title: Text(lang.getString(AppLocalizations.SETTINGS)))
+                icon: Icon(Icons.settings),
+                title: Text(lang.getString(AppLocalizations.SETTINGS)))
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[800],
