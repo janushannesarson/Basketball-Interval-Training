@@ -46,6 +46,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
     showDialog(
         context: context,
         child: NewIntervalDialog(
+          actualContext: context,
           onAddConfirmed: _onAddConfirmed,
         ));
   }
@@ -79,15 +80,16 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
   }
 
   void _editIntervalPressed(int intervalId, String exercise, int duration, int rest) {
-    showDialog(
-        context: context,
-        child: EditIntervalDialog(
-          intervalId: intervalId,
-          onSaveConfirmed: _onSaveConfirmed,
-          exercise: exercise,
-          duration: duration,
-          rest: rest,
-        ));
+//    showDialog(
+//        context: context,
+//        child: EditIntervalDialog(
+//          actualContext: context,
+//          intervalId: intervalId,
+//          onSaveConfirmed: _onSaveConfirmed,
+//          exercise: exercise,
+//          duration: duration,
+//          rest: rest,
+//        ));
   }
 
   List<Widget> convertToCards(List<WorkInterval> intervals) {
@@ -156,6 +158,9 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final textColor = dark ? Colors.black : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
@@ -178,6 +183,8 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
               } else {
                 return Center(
                     child: RaisedButton(
+                      color: theme.accentColor,
+                      textColor: textColor,
                   child: Text(lang.getString(AppLocalizations.CLICK_TO_ADD_INTERVAL)),
                   onPressed: () {
                     _addIntervalDialog();

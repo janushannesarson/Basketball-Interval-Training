@@ -22,7 +22,6 @@ class TimerScreenViewModel extends ChangeNotifier {
   bool stopPressed = false;
   Stopwatch _workoutStopWatch;
   Timer _timer;
-  Duration checkPoint = Duration.zero;
 
   Duration get workoutDuration => _workoutStopWatch.elapsed;
 

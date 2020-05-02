@@ -1,6 +1,7 @@
 import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/home_screen/edit_workout_screen.dart';
 import 'package:basketball_workouts/model/workout.dart';
+import 'package:basketball_workouts/theme.dart';
 import 'package:basketball_workouts/timer_screen/timer_screen.dart';
 import 'package:basketball_workouts/workouts_screen/new_workout_dialog.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen_view_model.dart';
@@ -25,12 +26,13 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     Navigator.of(context, rootNavigator: true).pop('dialog');
   }
 
-  void _onNewWorkoutPressed(BuildContext context) async {
+  void _onNewWorkoutPressed() async {
     showDialog(
         context: context,
         child: NewWorkoutDialog(
           takenNames: await viewModel.getNames(),
           onNewWorkoutConfirmed: _onNewWorkoutConfirmed,
+          actualContext: context,
         ));
   }
 
@@ -90,12 +92,15 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final textColor = dark ? Colors.black : Colors.white;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          _onNewWorkoutPressed(context);
+          _onNewWorkoutPressed();
         },
       ),
       appBar: AppBar(title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
@@ -108,9 +113,11 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
               if (snapshot.data.isEmpty) {
                 return Center(
                   child: RaisedButton(
+                    textColor: textColor,
+                    color: Theme.of(context).accentColor,
                     child: Text(lang.getString(AppLocalizations.CLICK_TO_CREATE_WORKOUT)),
                     onPressed: () {
-                      _onNewWorkoutPressed(context);
+                      _onNewWorkoutPressed();
                     },
                   ),
                 );

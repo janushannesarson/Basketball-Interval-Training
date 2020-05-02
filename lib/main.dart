@@ -34,12 +34,16 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ThemeChanger.newInstance(),
+      future: ThemeChanger.getInstance(),
       builder: (context, snapshot) {
-        return ChangeNotifierProvider<ThemeChanger>(
-          create: (_) => snapshot as ThemeChanger,
-          child: new MaterialAppWithTheme(),
-        );
+        if(snapshot.hasData){
+          return ChangeNotifierProvider<ThemeChanger>(
+            create: (_) => snapshot.data as ThemeChanger,
+            child: new MaterialAppWithTheme(),
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
       },
     );
   }

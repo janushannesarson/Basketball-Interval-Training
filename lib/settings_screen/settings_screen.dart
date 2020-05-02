@@ -16,6 +16,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final textColor = dark ? Colors.black : Colors.white;
 
     return Scaffold(
         appBar: AppBar(
@@ -36,7 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                            child: Text(lang.getString(AppLocalizations.TEXT_TO_SPEECH_ENABLED)),
+                            child: Text(lang.getString(
+                                AppLocalizations.TEXT_TO_SPEECH_ENABLED)),
                           ),
                           Switch(
                             value: viewModel.ttsEnabled,
@@ -55,7 +59,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                            child: Text(lang.getString(AppLocalizations.TEXT_TO_SPEECH_VOLUME)),
+                            child: Text(lang.getString(
+                                AppLocalizations.TEXT_TO_SPEECH_VOLUME)),
                           ),
                           Slider(
                             value: viewModel.ttsVolume,
@@ -79,7 +84,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text(lang.getString(AppLocalizations.TEXT_TO_SPEECH_RATE))),
+                          Expanded(
+                              child: Text(lang.getString(
+                                  AppLocalizations.TEXT_TO_SPEECH_RATE))),
                           Slider(
                             value: viewModel.speechRate,
                             onChanged: !viewModel.ttsEnabled
@@ -94,7 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             max: 1.25,
                             label:
                                 "${viewModel.speechRate == 0.75 ? "Slow" : viewModel.speechRate == 1 ? "Normal" : viewModel.speechRate == 1.25 ? "Fast" : viewModel.speechRate}",
-                          )
+                          ),
                         ],
                       ),
                     ),
