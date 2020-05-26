@@ -68,15 +68,15 @@ class _NewWorkoutDialogState extends State<NewWorkoutDialog> {
                 decoration: new InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: dark ? Colors.white : Colors.blue, width: 2.0),
+                          color: dark ? Colors.white : theme.primaryColor, width: 2.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: dark ? Colors.white : Colors.blue, width: 2.0),
+                          color: dark ? Colors.white : theme.primaryColor, width: 2.0),
                     ),
                     labelText: lang.getString(AppLocalizations.WORKOUT_NAME),
                     labelStyle:
-                        TextStyle(color: dark ? Colors.white : Colors.blue)),
+                        TextStyle(color: dark ? Colors.white : theme.primaryColor)),
                 onChanged: (String string) {
                   setState(() {
                     verifyName(string);

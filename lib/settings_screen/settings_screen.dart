@@ -18,7 +18,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final lang = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
-    final textColor = dark ? Colors.black : Colors.white;
 
     return Scaffold(
         appBar: AppBar(
@@ -29,6 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             builder: (buildContext, snapshot) {
               if (snapshot.hasData) {
                 viewModel = snapshot.data;
+                //need the themechanger so the user can change the team
                 viewModel.themeChanger = Provider.of<ThemeChanger>(context);
 
                 return Column(
@@ -85,8 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text(lang.getString(
-                                  AppLocalizations.TEXT_TO_SPEECH_RATE))),
+                              child: Text("Text to speech speed")),
                           Slider(
                             value: viewModel.speechRate,
                             onChanged: !viewModel.ttsEnabled
@@ -96,32 +95,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       viewModel.speechRate = rate;
                                     });
                                   },
-                            divisions: 2,
+                            divisions: 1,
                             min: 0.75,
-                            max: 1.25,
+                            max: 1,
                             label:
-                                "${viewModel.speechRate == 0.75 ? "Slow" : viewModel.speechRate == 1 ? "Normal" : viewModel.speechRate == 1.25 ? "Fast" : viewModel.speechRate}",
+                                "${viewModel.speechRate == 0.75 ? "Slow" : "Normal"}",
                           ),
                         ],
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Expanded(child: Text("Dark mode")),
-                          Switch(
-                            value: viewModel.darkModeEnabled,
-                            onChanged: (enabled) {
-                              setState(() {
-                                viewModel.darkModeEnabled = enabled;
-                              });
-                            },
-                          )
-                        ],
-                      ),
-                    )
                   ],
                 );
               } else {

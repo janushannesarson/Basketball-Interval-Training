@@ -1,7 +1,6 @@
 import 'package:basketball_workouts/app_localizations.dart';
 import 'package:basketball_workouts/home_screen/edit_workout_screen.dart';
 import 'package:basketball_workouts/model/workout.dart';
-import 'package:basketball_workouts/theme.dart';
 import 'package:basketball_workouts/timer_screen/timer_screen.dart';
 import 'package:basketball_workouts/workouts_screen/new_workout_dialog.dart';
 import 'package:basketball_workouts/workouts_screen/workouts_screen_view_model.dart';
@@ -86,15 +85,15 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
       secString = "0${sec.toString()}";
     }
 
-    return Text("${lang.getString(AppLocalizations.TOTAL_TIME)} " + minString + ":" + secString);
+    return Text("${lang.getString(AppLocalizations.TOTAL_TIME)} " +
+        minString +
+        ":" +
+        secString);
   }
 
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final textColor = dark ? Colors.black : Colors.white;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -103,7 +102,8 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
           _onNewWorkoutPressed();
         },
       ),
-      appBar: AppBar(title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
+      appBar:
+          AppBar(title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
       body: FutureBuilder<List>(
           future: viewModel.workouts,
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
@@ -113,9 +113,8 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
               if (snapshot.data.isEmpty) {
                 return Center(
                   child: RaisedButton(
-                    textColor: textColor,
-                    color: Theme.of(context).accentColor,
-                    child: Text(lang.getString(AppLocalizations.CLICK_TO_CREATE_WORKOUT)),
+                    child: Text(lang
+                        .getString(AppLocalizations.CLICK_TO_CREATE_WORKOUT)),
                     onPressed: () {
                       _onNewWorkoutPressed();
                     },
@@ -123,6 +122,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                 );
               } else {
                 return ListView.builder(
+                    padding: EdgeInsets.only(bottom: 56),
                     itemCount: snapshot.data.length,
                     itemBuilder: (buildContext, int index) {
                       Workout workout = snapshot.data[index];
@@ -147,23 +147,16 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                             trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  SingleChildScrollView(
-                                    child: Column(
-                                      children: <Widget>[
-                                        IconButton(
-                                          iconSize: 40,
-                                          tooltip: "Edit",
-                                          color: Colors.red,
-                                          icon: Icon(Icons.edit),
-                                          splashColor: Colors.amber,
-                                          onPressed: () {
-                                            _editWorkoutPressed(
-                                                workout.id, workout.name, context);
-                                          },
-                                        ),
-                                        Text("Edit"),
-                                      ],
-                                    ),
+                                  IconButton(
+                                    iconSize: 40,
+                                    tooltip: "Edit",
+                                    color: Colors.red,
+                                    icon: Icon(Icons.edit),
+                                    splashColor: Colors.amber,
+                                    onPressed: () {
+                                      _editWorkoutPressed(
+                                          workout.id, workout.name, context);
+                                    },
                                   ),
                                   IconButton(
                                     iconSize: 40,

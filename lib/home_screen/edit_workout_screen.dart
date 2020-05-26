@@ -13,12 +13,11 @@ class EditWorkoutScreen extends StatefulWidget {
   final BuildContext scaffoldContext;
   final void Function() fetchWorkoutsCallBack;
 
-  EditWorkoutScreen(
-      {Key key,
-      this.fetchWorkoutsCallBack,
-      this.workoutId,
-      this.workoutName,
-      this.scaffoldContext})
+  EditWorkoutScreen({Key key,
+    this.fetchWorkoutsCallBack,
+    this.workoutId,
+    this.workoutName,
+    this.scaffoldContext})
       : super(key: key);
 
   @override
@@ -58,44 +57,38 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
     });
   }
 
-  void _saveWorkoutPressed(BuildContext context) {
-    viewModel.saveWorkout();
-    Navigator.pop(context);
-
-    Scaffold.of(widget.scaffoldContext)
-        .showSnackBar(SnackBar(content: Text("Workout saved")));
-  }
-
   void _deleteInterval(WorkInterval interval) {
     setState(() {
       viewModel.deleteInterval(interval);
     });
   }
 
-  void _onSaveConfirmed(int intervalId, String exercise, int duration, int rest) {
+  void _onSaveConfirmed(int intervalId, String exercise, int duration,
+      int rest) {
     setState(() {
       viewModel.updateInterval(intervalId, exercise, duration, rest);
       intervals = viewModel.getIntervals();
     });
   }
 
-  void _editIntervalPressed(int intervalId, String exercise, int duration, int rest) {
-//    showDialog(
-//        context: context,
-//        child: EditIntervalDialog(
-//          actualContext: context,
-//          intervalId: intervalId,
-//          onSaveConfirmed: _onSaveConfirmed,
-//          exercise: exercise,
-//          duration: duration,
-//          rest: rest,
-//        ));
+  void _editIntervalPressed(int intervalId, String exercise, int duration,
+      int rest) {
+    showDialog(
+        context: context,
+        child: EditIntervalDialog(
+          actualContext: context,
+          intervalId: intervalId,
+          onSaveConfirmed: _onSaveConfirmed,
+          exercise: exercise,
+          duration: duration,
+          rest: rest,
+        ));
   }
 
   List<Widget> convertToCards(List<WorkInterval> intervals) {
     List<Widget> result = new List();
 
-    for (int i=0; i < intervals.length; i++) {
+    for (int i = 0; i < intervals.length; i++) {
       final interval = intervals[i];
 
       result.add(Dismissible(
@@ -112,9 +105,9 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
         child: Container(
           child: Card(
             child: ListTile(
-              title: Text("#${i+1} " + interval.description),
+              title: Text("#${i + 1} " + interval.description),
               subtitle:
-                  Text("Duration: ${interval.duration} Rest: ${interval.rest}"),
+              Text("Duration: ${interval.duration} Rest: ${interval.rest}"),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -152,7 +145,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
         context,
         MaterialPageRoute(
             builder: (BuildContext context) =>
-                new TimerScreen(viewModel.intervals)));
+            new TimerScreen(viewModel.intervals)));
   }
 
   @override
@@ -164,7 +157,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.workoutName}"),
+        title: Text("Editing: ${widget.workoutName}"),
       ),
       body: WillPopScope(
         onWillPop: _onBackPressed,
@@ -183,13 +176,12 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
               } else {
                 return Center(
                     child: RaisedButton(
-                      color: theme.accentColor,
-                      textColor: textColor,
-                  child: Text(lang.getString(AppLocalizations.CLICK_TO_ADD_INTERVAL)),
-                  onPressed: () {
-                    _addIntervalDialog();
-                  },
-                ));
+                      child: Text(lang.getString(
+                          AppLocalizations.CLICK_TO_ADD_INTERVAL)),
+                      onPressed: () {
+                        _addIntervalDialog();
+                      },
+                    ));
               }
             } else {
               return Center(child: CircularProgressIndicator());

@@ -82,7 +82,7 @@ class _TimerScreenState extends State<TimerScreen> {
           if (viewModel.intervalIndex == index) {
             progressIndicator = LinearProgressIndicator(
               value: viewModel.getProgressPercentage(),
-              backgroundColor: Colors.red,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             );
             if (viewModel.mode == TimerMode.duration) {
               color = Colors.red;

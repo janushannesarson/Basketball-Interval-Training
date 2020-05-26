@@ -19,7 +19,11 @@ void main() {
       ],
       localeResolutionCallback:
           (Locale locale, Iterable<Locale> supportedLocales) {
-        return locale;
+            if(supportedLocales.contains(locale.languageCode.toString())){
+              return locale;
+            } else{
+              return const Locale('en');
+            }
       },
       home: MyApp()));
 }
@@ -55,7 +59,7 @@ class MaterialAppWithTheme extends StatefulWidget {
 }
 
 class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -74,7 +78,6 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = AppLocalizations.of(context);
     final theme = Provider.of<ThemeChanger>(context);
 
     return MaterialApp(
@@ -84,26 +87,36 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [const Locale('en'), const Locale('es')],
+      supportedLocales: [const Locale('en')],
       localeResolutionCallback:
           (Locale locale, Iterable<Locale> supportedLocales) {
-        return locale;
+        if(supportedLocales.contains(locale.languageCode.toString())){
+          return locale;
+        } else{
+          return const Locale('en');
+        }
       },
-      home: Scaffold(
-        body: _callScreen(),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                title: Text(lang.getString(AppLocalizations.SETTINGS)))
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
-          onTap: _onItemTapped,
-        ),
+      home: buildScaffold(),
+    );
+  }
+
+  Scaffold buildScaffold() {
+    final lang = AppLocalizations.of(context);
+
+    return Scaffold(
+      body: _callScreen(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text(lang.getString(AppLocalizations.YOUR_WORKOUTS))),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text(lang.getString(AppLocalizations.SETTINGS)))
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
   }

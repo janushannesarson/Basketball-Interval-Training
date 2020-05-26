@@ -6,7 +6,6 @@ import '../theme.dart';
 const SPEECH_RATE = "speech_rate";
 const TTS_ENABLED = "tts_enabled";
 const TTS_VOLUME = "tts_volume";
-const DARK_MODE_ENABLED = "dark_mode_enabled";
 
 class SettingsScreenViewModel {
   double _ttsVolume;
@@ -30,14 +29,6 @@ class SettingsScreenViewModel {
     save();
   }
 
-  bool _darkModeEnabled;
-  bool get darkModeEnabled => _darkModeEnabled;
-  set darkModeEnabled(bool value){
-    _darkModeEnabled = value;
-    _themeChanger.setDarkTheme(value);
-    save();
-  }
-
   ThemeChanger _themeChanger;
   set themeChanger(ThemeChanger value){
     _themeChanger = value;
@@ -50,7 +41,6 @@ class SettingsScreenViewModel {
     prefs.setDouble(SPEECH_RATE, _speechRate);
     prefs.setBool(TTS_ENABLED, _ttsEnabled);
     prefs.setDouble(TTS_VOLUME, _ttsVolume);
-    prefs.setBool(DARK_MODE_ENABLED, _darkModeEnabled);
   }
 
   Future _init() async {
@@ -58,7 +48,6 @@ class SettingsScreenViewModel {
     _speechRate = prefs.getDouble(SPEECH_RATE) ?? 1;
     _ttsEnabled = prefs.getBool(TTS_ENABLED) ?? true;
     _ttsVolume = prefs.getDouble(TTS_VOLUME) ?? 1;
-    _darkModeEnabled = prefs.getBool(DARK_MODE_ENABLED) ?? false;
   }
 
   static Future<SettingsScreenViewModel> newInstance() async {

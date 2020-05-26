@@ -92,13 +92,13 @@ class TimerScreenViewModel extends ChangeNotifier {
       mode = TimerMode.duration;
       _intervalDuration = Duration.zero;
       intervalIndex++;
-      _scrollCallBack(intervalIndex);
 
       if (intervalIndex >= intervals.length) {
         //check if workout is completed
-        tts.speak("Workout completed");
         _popCallBack();
+        tts.speak("Workout completed");
       } else {
+        _scrollCallBack(intervalIndex);
         tts.speak(intervals[intervalIndex].description);
       }
     }

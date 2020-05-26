@@ -105,16 +105,16 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: dark ? Colors.white : Colors.blue),
+                                color: dark ? Colors.white : theme.primaryColor),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: textColor,
+                              color: dark ? Colors.white : theme.primaryColor,
                             ),
                           ),
                           labelText: lang.getString(AppLocalizations.EXERCISE),
                           labelStyle: TextStyle(
-                            color: textColor,
+                            color: dark ? Colors.white : theme.primaryColor,
                           )),
                     ),
                   ),
@@ -122,7 +122,7 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                       padding: EdgeInsets.all(5),
                       child: RaisedButton(
                         color: theme.accentColor,
-                        child: Text(lang.getString(AppLocalizations.CATALOG)),
+                        child: Text(lang.getString(AppLocalizations.SUGGESTIONS)),
                         onPressed: () => {_exerciseCatalogPressed(context)},
                       ))
                 ],
@@ -244,15 +244,28 @@ class _NewIntervalDialogState extends State<NewIntervalDialog> {
                 max: 300,
               ),
             ),
-            FlatButton(
-                disabledColor: Colors.blueGrey,
-                color: theme.accentColor,
-                onPressed: exerciseCtrl.text.isEmpty
-                    ? null
-                    : () {
-                        _addIntervalPressed(context);
-                      },
-                child: Text(lang.getString(AppLocalizations.ADD_INTERVAL)))
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                FlatButton(
+                    disabledColor: Colors.blueGrey,
+                    color: theme.accentColor,
+                    onPressed: exerciseCtrl.text.isEmpty
+                        ? null
+                        : () {
+                            _addIntervalPressed(context);
+                          },
+                    child: Text(lang.getString(AppLocalizations.ADD_INTERVAL))),
+                FlatButton(
+                  disabledColor: Colors.blueGrey,
+                  color: theme.accentColor,
+                  child: Text("Cancel"),
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            )
           ],
         ),
       ),

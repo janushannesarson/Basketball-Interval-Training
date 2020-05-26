@@ -23,13 +23,14 @@ class TextToSpeech{
     _tts.setVolume(volume);
   }
 
+
   Future speak(String speak) async{
     _tts.speak(speak);
   }
 
   static Future<TextToSpeech> newInstance() async{
-    final prefs = await SharedPreferences.getInstance();
-    bool ttsEnabled = prefs.getBool(TTS_ENABLED);
+    final settings = await SettingsScreenViewModel.newInstance();
+    bool ttsEnabled = settings.ttsEnabled;
 
     TextToSpeech tts;
 

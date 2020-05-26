@@ -26,7 +26,7 @@ class AppLocalizations {
   static const CLICK_TO_ADD_INTERVAL = "Click to add interval";
   static const NEW_INTERVAL = "New Interval";
   static const EXERCISE = "Exercise";
-  static const CATALOG = "Catalog";
+  static const SUGGESTIONS = "Suggestions";
   static const ADD_INTERVAL = "Add interval";
 
 
@@ -46,7 +46,7 @@ class AppLocalizations {
       CLICK_TO_ADD_INTERVAL: CLICK_TO_ADD_INTERVAL,
       NEW_INTERVAL: NEW_INTERVAL,
       EXERCISE: EXERCISE,
-      CATALOG: CATALOG,
+      SUGGESTIONS: SUGGESTIONS,
       ADD_INTERVAL: ADD_INTERVAL,
     },
     'es': {
@@ -64,7 +64,7 @@ class AppLocalizations {
       CLICK_TO_ADD_INTERVAL: 'Haga clic para agregar intervalo',
       NEW_INTERVAL: 'Nueva intervalo',
       EXERCISE: "Ejercicio",
-      CATALOG: "Catalogar",
+      SUGGESTIONS: "Catalogar",
       ADD_INTERVAL: "Agregar intervalo",
     },
   };
@@ -78,7 +78,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => ['en'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) {
