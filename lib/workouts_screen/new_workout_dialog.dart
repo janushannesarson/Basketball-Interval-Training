@@ -61,6 +61,7 @@ class _NewWorkoutDialogState extends State<NewWorkoutDialog> {
             Container(
               padding: EdgeInsets.all(10),
               child: TextField(
+                maxLength: 50,
                 style: TextStyle(
                   color: dark ? Colors.white : Colors.black
                 ),

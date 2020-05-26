@@ -115,6 +115,7 @@ class _EditIntervalDialogState extends State<EditIntervalDialog> {
                 children: <Widget>[
                   Flexible(
                     child: TextField(
+                      maxLength: 50,
                       style: TextStyle(color: textColor),
                       controller: exerciseCtrl,
                       onChanged: (string) {
