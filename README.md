@@ -1,16 +1,12 @@
-# basketball_workouts
+# Basketball Interval Training
 
-A basketball workout creator
+A basketball workout creator app that enables you to create your own basketball interval workouts and through text-to-speech it will notify you what basketball move is next in your workout.
+
+The application follows a Model-View-ViewModel architecture and uses the sqflite package for storing workouts locally and fetches workout exercise suggestions from a firebase database.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+You can try out the application by downloading and installing it from Google Play store found here:
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+https://play.google.com/store/apps/details?id=com.basketballworkoutcreator.basketball_workouts
