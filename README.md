@@ -1,12 +1,11 @@
 # Basketball Interval Training
 
-A basketball workout creator app that enables you to create your own basketball interval workouts and through text-to-speech it will notify you what basketball move is next in your workout.
+A basketball workout creator app that allows you to design your own interval-based basketball workouts. Using text-to-speech, it will notify you of the next basketball move in your routine.
 
-The application follows a Model-View-ViewModel architecture and uses the sqflite package for storing workouts locally and fetches workout exercise suggestions from a firebase database.
+The app follows a Model-View-ViewModel (MVVM) architecture, utilizes the sqflite package for local workout storage, and retrieves exercise suggestions from a Firebase database.
 
-## Getting Started
-
-You can try out the application by downloading and installing it from Google Play store found here:
-
-
-https://play.google.com/store/apps/details?id=com.basketballworkoutcreator.basketball_workouts
+# Demo Pictures
+<img src="./demo_pictures/demo_1.jpg" alt="description" width="250">
+<img src="./demo_pictures/demo_2.jpg" alt="description" width="250">
+<img src="./demo_pictures/demo_3.jpg" alt="description" width="250">
+<img src="./demo_pictures/demo_4.jpg" alt="description" width="250">
